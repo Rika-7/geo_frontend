@@ -1,23 +1,16 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default function Home() {
-  const [isGpson, setIsGpson] = useState(false);
-
-  useEffect(() => {
-    setIsGpson(true);
-  }, []);
-
+const Home: React.FC = () => {
   return (
     <div>
-      <h1>
-        {isGpson ? "このアプリはGPS位置情報を使用します" : "Pre-rendered"}
-      </h1>
-      <Button className="flex flex-col" variant="outline">
-        OK
-      </Button>
+      <div>Home</div>
+      <Link href="/map" passHref>
+        <Button>Map Page</Button>
+      </Link>
     </div>
   );
-}
+};
+
+export default Home;
