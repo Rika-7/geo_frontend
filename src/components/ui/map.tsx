@@ -17,6 +17,14 @@ interface Place {
   url: string;
 }
 
+if (
+  (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
+    ._getIconUrl
+) {
+  delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
+    ._getIconUrl;
+}
+
 function Map() {
   const [mounted, setMounted] = useState(false);
   const center: [number, number] = [35.592735510792195, 139.43884126045768];
@@ -50,7 +58,6 @@ function Map() {
 
   useEffect(() => {
     // Set default icon options
-    delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconUrl: markerIcon.src,
       iconRetinaUrl: markerIcon2x.src,
@@ -58,8 +65,6 @@ function Map() {
     });
 
     setMounted(true);
-
-    // No need for manual cleanup as React will handle component unmounting
   }, []);
 
   if (!mounted) return null;
