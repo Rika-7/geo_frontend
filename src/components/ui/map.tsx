@@ -79,8 +79,11 @@ function Map() {
   if (!mounted) return null;
 
   return (
-    <main id="map" className="h-screen w-full padding: 1rem">
-      <div className="flex flex-col h-screen w-full border-radius: var(--brad-2)">
+    <main id="map" className="h-screen w-full p-4">
+      <div
+        className="flex flex-col h-screen w-full"
+        style={{ borderRadius: "var(--brad-2)" }}
+      >
         <MapContainer
           center={center}
           zoom={13}
