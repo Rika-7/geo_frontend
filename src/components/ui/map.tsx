@@ -49,7 +49,8 @@ function Map() {
   ];
 
   useEffect(() => {
-    // Leafletのアイコン表示
+    // Set default icon options
+    delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconUrl: markerIcon.src,
       iconRetinaUrl: markerIcon2x.src,
@@ -58,28 +59,13 @@ function Map() {
 
     setMounted(true);
 
-    // Cleanup function
-    return () => {
-      // Find the map instance
-      const mapInstance = document.querySelector("#map");
-      if (mapInstance) {
-        // Get the Leaflet map instance
-        const map = L.DomUtil.get(
-          mapInstance as HTMLElement
-        ) as unknown as L.Map;
-        if (map && map instanceof L.Map) {
-          // Remove all event listeners and remove the map
-          map.off();
-          map.remove();
-        }
-      }
-    };
+    // No need for manual cleanup as React will handle component unmounting
   }, []);
 
   if (!mounted) return null;
 
   return (
-    <main id="map" className="h-screen w-full p-4">
+    <main className="h-screen w-full p-4">
       <div
         className="flex flex-col h-screen w-full"
         style={{ borderRadius: "var(--brad-2)" }}
@@ -89,7 +75,6 @@ function Map() {
           zoom={13}
           scrollWheelZoom={false}
           style={{ height: "100%", width: "100%" }}
-          key={`${center[0]}-${center[1]}`}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
