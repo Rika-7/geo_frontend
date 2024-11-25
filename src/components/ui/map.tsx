@@ -51,7 +51,7 @@ function Map() {
       description:
         "江戸時代、小野路宿にあった旅籠はたご・旧「角屋かどや」を改修した施設",
       position: [35.60129950268735, 139.43801152786767],
-      category: "community_center",
+      category: "sightseeing",
       url: "https://www.city.machida.tokyo.jp/kanko/miru_aso/satoyamakoryukan/kouryukan_gaiyou_kinou.html",
     },
   ];
