@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  env: {
+    PORT: process.env.PORT || "8080",
+  },
   reactStrictMode: false,
   webpack: (config) => {
     config.resolve.fallback = { fs: false, path: false };
