@@ -271,10 +271,10 @@ function Map() {
         <div className="mb-4 p-2 bg-gray-100 rounded">
           <h3 className="font-bold mb-2">Map Legend:</h3>
           <div className="grid grid-cols-2 gap-2">
-            <div>🟢 Sightseeing</div>
-            <div>🟠 Eatery</div>
-            <div>🟣 Cultural Attraction</div>
-            <div>🔵 Shop</div>
+            <div>🟢 レジャー</div>
+            <div>🟠 レストラン</div>
+            <div>🟣 史跡名所</div>
+            <div>🔵 お店</div>
           </div>
         </div>
         {mounted && <MapComponent places={places} />}
