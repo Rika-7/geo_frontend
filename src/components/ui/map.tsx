@@ -9,52 +9,65 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 interface Place {
-  id: number;
+  place_id: number;
   placename: string;
   description: string;
-  position: [number, number];
   category: string;
+  latitude: number; // DECIMAL in MySQL maps to number in TypeScript
+  longitude: number; // DECIMAL in MySQL maps to number in TypeScript
   url: string;
 }
 
-if (
-  (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
-    ._getIconUrl
-) {
-  delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: () => void })
+// Move the icon deletion outside the component
+if ((L.Icon.Default.prototype as { _getIconUrl?: () => string })._getIconUrl) {
+  delete (L.Icon.Default.prototype as { _getIconUrl?: () => string })
     ._getIconUrl;
 }
 
+// Separate MapComponent to handle the actual map rendering
+const MapComponent = ({ places }: { places: Place[] }) => {
+  const center: [number, number] = [35.592735510792195, 139.43884126045768];
+
+  return (
+    <MapContainer
+      center={center}
+      zoom={13}
+      scrollWheelZoom={false}
+      style={{ height: "100%", width: "100%" }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {places.map((place) => (
+        <Marker
+          key={place.place_id}
+          position={[place.latitude, place.longitude]}
+        >
+          <Popup>
+            <a
+              href={place.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue", textDecoration: "underline" }}
+            >
+              <strong>{place.placename}</strong>
+            </a>
+            <br />
+            {place.description}
+          </Popup>
+        </Marker>
+      ))}
+    </MapContainer>
+  );
+};
+
+// Main Map component
 function Map() {
   const [mounted, setMounted] = useState(false);
-  const center: [number, number] = [35.592735510792195, 139.43884126045768];
-  const places: Place[] = [
-    {
-      id: 1,
-      placename: "町田GIONスタジアム",
-      description: "FC町田ゼルビアのホームスタジアム",
-      position: [35.592735510792195, 139.43884126045768],
-      category: "stadium",
-      url: "https://www.zelvia.co.jp/stadium/access/",
-    },
-    {
-      id: 2,
-      placename: "町田薬師池公園",
-      description: "四季彩の杜",
-      position: [35.578879824273436, 139.4481512601811],
-      category: "park",
-      url: "https://machida-shikisainomori.com",
-    },
-    {
-      id: 3,
-      placename: "小野路宿里山交流館",
-      description:
-        "江戸時代、小野路宿にあった旅籠はたご・旧「角屋かどや」を改修した施設",
-      position: [35.60129950268735, 139.43801152786767],
-      category: "sightseeing",
-      url: "https://www.city.machida.tokyo.jp/kanko/miru_aso/satoyamakoryukan/kouryukan_gaiyou_kinou.html",
-    },
-  ];
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Set default icon options
@@ -64,10 +77,31 @@ function Map() {
       shadowUrl: markerShadow.src,
     });
 
+    const fetchPlaces = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/places`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch places");
+        }
+        const data = await response.json();
+        setPlaces(data);
+      } catch (err) {
+        console.error("Error fetching places:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch places");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlaces();
     setMounted(true);
   }, []);
 
   if (!mounted) return null;
+  if (loading) return <div>Loading map data...</div>;
+  if (error) return <div>Error loading map data: {error}</div>;
 
   return (
     <main className="h-screen w-full p-4">
@@ -75,33 +109,7 @@ function Map() {
         className="flex flex-col h-screen w-full"
         style={{ borderRadius: "var(--brad-2)" }}
       >
-        <MapContainer
-          center={center}
-          zoom={13}
-          scrollWheelZoom={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {places.map((place) => (
-            <Marker key={place.id} position={place.position}>
-              <Popup>
-                <a
-                  href={place.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "blue", textDecoration: "underline" }}
-                >
-                  <strong>{place.placename}</strong>
-                </a>
-                <br />
-                {place.description}
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
+        {mounted && <MapComponent places={places} />}
       </div>
     </main>
   );
