@@ -119,17 +119,44 @@ function Map() {
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/places`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch places");
+        // Add console.log to debug the API URL
+        console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
+        if (!process.env.NEXT_PUBLIC_API_URL) {
+          throw new Error(
+            "API URL is not configured - please check environment variables"
+          );
         }
+
+        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/places`;
+        console.log("Fetching from:", apiUrl);
+
+        const response = await fetch(apiUrl, {
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(
+            `Failed to fetch places: ${response.status} ${response.statusText}${
+              errorText ? ` - ${errorText}` : ""
+            }`
+          );
+        }
+
         const data = await response.json();
         setPlaces(data);
       } catch (err) {
         console.error("Error fetching places:", err);
-        setError(err instanceof Error ? err.message : "Failed to fetch places");
+        setError(
+          err instanceof Error
+            ? `Error: ${err.message}. API URL: ${
+                process.env.NEXT_PUBLIC_API_URL || "not set"
+              }`
+            : "Failed to fetch places. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
