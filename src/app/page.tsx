@@ -1,24 +1,8 @@
-// import React from "react";
-// import { Button, buttonVariants } from "@/components/ui/button";
-// import Link from "next/link";
-
-// const Home: React.FC = () => {
-//   return (
-//     <div className="flex flex-col items-center justify-center h-screen">
-//       <div className="mb-4">Home</div>
-//       <Link href="/map" passHref>
-//         <Button className={buttonVariants({ variant: "secondary" })}>
-//           Map Page
-//         </Button>
-//       </Link>
-//     </div>
-//   );
-// };
-
 import React from "react"
 import { ChevronDown } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import Image from 'next/image';
+import Link from 'next/link'
 
 const Home: React.FC = () => {
   return (
@@ -57,7 +41,11 @@ const Home: React.FC = () => {
         </div>
 
         <div className="space-y-3 pt-4">
-          <Button className="w-full bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white">ログイン</Button>
+          <Button className="w-full bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white">
+            <Link href="/login">
+              ログイン
+            </Link>
+          </Button>
           <Button variant="outline" className="w-full bg-transparent text-white border-white hover:bg-white hover:text-black">新規登録</Button>
         </div>
       </main>
