@@ -118,6 +118,10 @@ function Map() {
 
   useEffect(() => {
     const fetchPlaces = async () => {
+
+      console.log("All env variables:", process.env);
+      console.log("API URL specifically:", process.env.NEXT_PUBLIC_API_URL);
+
       try {
         // Add console.log to debug the API URL
         console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
