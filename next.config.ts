@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   env: {
     PORT: process.env.PORT || "8080",
+    NEXT_PUBLIC_API_URL: "https://tech0-gen-7-step4-student-finalproject-4-exeabgd9eyekb7c2.canadacentral-01.azurewebsites.net",
   },
   reactStrictMode: false,
   webpack: (config) => {
