@@ -1,7 +1,9 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
+import { MenuButton } from '@/components/ui/menu_button';
 import Image from 'next/image';
-import Link from 'next/link'
+import Link from 'next/link';
+
 
 const Home: React.FC = () => {
   return (
@@ -40,35 +42,10 @@ const Home: React.FC = () => {
         </div>
 
         <div className="flex justify-center space-x-4 max-w-md mx-auto">
-          <Link href="/home">
-            <Button className="rounded-full w-16 h-16 bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white p-0 text-xs flex items-center justify-center">
-              ホーム
-            </Button>
-          </Link>
-          <Link href="/map">
-            <Button 
-                className="rounded-full w-16 h-16 bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900 p-0 text-xs flex flex-col items-center justify-center"
-            >
-                <span>登城</span>
-                <span>マップ</span>
-            </Button>
-          </Link>
-          <Link href="/places">
-            <Button 
-                className="rounded-full w-16 h-16 bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900 p-0 text-xs flex flex-col items-center justify-center"
-            >
-                <span>周辺</span>
-                <span>情報</span>
-            </Button>
-          </Link>
-          <Link href="/traffic">
-            <Button 
-                className="rounded-full w-16 h-16 bg-gray-200 text-gray-700 hover:bg-gray-300 hover:text-gray-900 p-0 text-xs flex flex-col items-center justify-center"
-            >
-                <span>交通</span>
-                <span>情報</span>
-            </Button>
-          </Link>
+          <MenuButton href="/home" label="ホーム" isActive={true} />
+          <MenuButton href="/map" label={<><span>登城</span><span>マップ</span></>} />
+          <MenuButton href="/places" label={<><span>周辺</span><span>情報</span></>} />
+          <MenuButton href="/traffic" label={<><span>交通</span><span>情報</span></>} />
         </div>
       </main>
     </div>
