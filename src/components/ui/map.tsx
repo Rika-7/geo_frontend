@@ -1,10 +1,10 @@
-// 
-"use client";
-
-import { useEffect, useState } from "react";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { useState, FC, ChangeEvent } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, MapPin, ZoomIn, ZoomOut } from 'lucide-react';
 
 interface Place {
   place_id: number;
@@ -16,43 +16,47 @@ interface Place {
   url: string;
 }
 
-// Define category colors
-const categoryIcons = {
+interface MapProps {
+  places: Place[];
+  center?: [number, number];
+  zoom?: number;
+  showSearch?: boolean;
+  showLegend?: boolean;
+  showControls?: boolean;
+}
+
+type CategoryIcons = {
+  [key in 'sightseeing' | 'eatery' | 'cultural_attraction' | 'shop']: L.Icon;
+};
+
+const categoryIcons: CategoryIcons = {
   sightseeing: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   }),
   eatery: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   }),
   cultural_attraction: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   }),
   shop: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
@@ -60,134 +64,132 @@ const categoryIcons = {
   }),
 };
 
-// Helper function to get the appropriate icon based on category
-const getMarkerIcon = (category: string) => {
-  const normalizedCategory = category.toLowerCase();
+const getMarkerIcon = (category: string): L.Icon => {
+  const normalizedCategory = category.toLowerCase() as keyof CategoryIcons;
+  return categoryIcons[normalizedCategory] || categoryIcons.sightseeing;
+};
+
+const MapControls: FC = () => {
+  const map = useMap();
+
+  const handleZoomIn = (): void => {
+    map.zoomIn();
+  };
+
+  const handleZoomOut = (): void => {
+    map.zoomOut();
+  };
+
+  const handleCurrentLocation = (): void => {
+    map.locate().on("locationfound", (e: L.LocationEvent) => {
+      map.flyTo(e.latlng, map.getZoom());
+    });
+  };
+
   return (
-    categoryIcons[normalizedCategory as keyof typeof categoryIcons] ||
-    categoryIcons.sightseeing
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[1000]">
+      <Button variant="outline" size="sm" onClick={handleCurrentLocation}>
+        <MapPin className="h-4 w-4 mr-2" />
+        Current Location
+      </Button>
+      <Button variant="outline" size="sm" onClick={handleZoomIn}>
+        <ZoomIn className="h-4 w-4" />
+      </Button>
+      <Button variant="outline" size="sm" onClick={handleZoomOut}>
+        <ZoomOut className="h-4 w-4" />
+      </Button>
+    </div>
   );
 };
 
-// Separate MapComponent to handle the actual map rendering
-const MapComponent = ({ places }: { places: Place[] }) => {
-  const center: [number, number] = [35.592735510792195, 139.43884126045768];
+const MapComponent: FC<MapProps> = ({
+  places,
+  center = [35.592735510792195, 139.43884126045768],
+  zoom = 13,
+  showSearch = true,
+  showLegend = true,
+  showControls = true,
+}) => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const isSearchNeeded = (): boolean => {
+    return showSearch && places.length > 0;
+  };
+
+  const isLegendNeeded = (): boolean => {
+    if (!showLegend) return false;
+    const categories = new Set(places.map(place => place.category.toLowerCase()));
+    return categories.size > 1;
+  };
+
+  const handleSearch = (): void => {
+    console.log("Searching for:", searchQuery);
+  };
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
-    <MapContainer
-      center={center}
-      zoom={13}
-      scrollWheelZoom={false}
-      style={{ height: "100%", width: "100%" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      {places.map((place) => (
-        <Marker
-          key={place.place_id}
-          position={[place.latitude, place.longitude]}
-          icon={getMarkerIcon(place.category)}
-        >
-          <Popup>
-            <a
-              href={place.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "blue", textDecoration: "underline" }}
-            >
-              <strong>{place.placename}</strong>
-            </a>
-            <br />
-            {place.description}
-            <br />
-            <em>Category: {place.category}</em>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
-  );
-};
-
-// Main Map component
-function Map() {
-  const [mounted, setMounted] = useState(false);
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      try {
-        if (!process.env.NEXT_PUBLIC_API_URL) {
-          throw new Error(
-            "API URL is not configured - please check environment variables"
-          );
-        }
-
-        const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/places`;
-        console.log("Fetching from:", apiUrl);
-
-        const response = await fetch(apiUrl, {
-          headers: {
-            Accept: "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `Failed to fetch places: ${response.status} ${response.statusText}${
-              errorText ? ` - ${errorText}` : ""
-            }`
-          );
-        }
-
-        const data = await response.json();
-        setPlaces(data);
-      } catch (err) {
-        console.error("Error fetching places:", err);
-        setError(
-          err instanceof Error
-            ? `Error: ${err.message}. API URL: ${
-                process.env.NEXT_PUBLIC_API_URL || "not set"
-              }`
-            : "Failed to fetch places. Please try again later."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlaces();
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-  if (loading) return <div>Loading map data...</div>;
-  if (error) return <div>Error loading map data: {error}</div>;
-
-  return (
-    <main className="h-screen w-full p-4">
-      <div
-        className="flex flex-col h-screen w-full"
-        style={{ borderRadius: "var(--brad-2)" }}
-      >
-        <div className="mb-4 p-2 bg-gray-500 rounded text-white">
+    <div className="h-full w-full relative">
+      {isSearchNeeded() && (
+        <div className="absolute top-4 left-4 right-4 z-[1000] flex space-x-2">
+          <Input
+            placeholder="Search location..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="flex-grow"
+          />
+          <Button variant="outline" size="icon" onClick={handleSearch}>
+            <Search className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+      {isLegendNeeded() && (
+        <div className="absolute top-16 left-4 z-[1000] bg-white p-2 rounded-md shadow">
           <h3 className="font-bold mb-2">Map Legend:</h3>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 text-sm">
             <div>🟢 レジャー</div>
             <div>🟠 レストラン</div>
             <div>🟣 史跡名所</div>
             <div>🔵 お店</div>
           </div>
         </div>
-        {mounted && places.length > 0 && <MapComponent places={places} />}
-      </div>
-    </main>
+      )}
+      <MapContainer
+        center={center}
+        zoom={zoom}
+        scrollWheelZoom={false}
+        style={{ height: "100%", width: "100%", borderRadius: "var(--radius)" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {places.map((place: Place) => (
+          <Marker
+            key={place.place_id}
+            position={[place.latitude, place.longitude]}
+            icon={getMarkerIcon(place.category)}
+          >
+            <Popup>
+              <a
+                href={place.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline"
+              >
+                <strong>{place.placename}</strong>
+              </a>
+              <p className="mt-2">{place.description}</p>
+              <p className="mt-1 italic">Category: {place.category}</p>
+            </Popup>
+          </Marker>
+        ))}
+        {showControls && <MapControls />}
+      </MapContainer>
+    </div>
   );
-}
+};
 
-export default Map;
-
+export default MapComponent;

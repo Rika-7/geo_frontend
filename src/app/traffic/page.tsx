@@ -2,7 +2,7 @@ import React from 'react'
 
 const Traffic = () => {
   return (
-    <div>Places</div>
+    <div>Traffic Information</div>
   )
 }
 
