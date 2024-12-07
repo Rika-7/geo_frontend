@@ -1,3 +1,4 @@
+// 
 "use client";
 
 import { useEffect, useState } from "react";
@@ -118,14 +119,7 @@ function Map() {
 
   useEffect(() => {
     const fetchPlaces = async () => {
-
-      console.log("All env variables:", process.env);
-      console.log("API URL specifically:", process.env.NEXT_PUBLIC_API_URL);
-
       try {
-        // Add console.log to debug the API URL
-        console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-
         if (!process.env.NEXT_PUBLIC_API_URL) {
           throw new Error(
             "API URL is not configured - please check environment variables"
@@ -180,7 +174,7 @@ function Map() {
         className="flex flex-col h-screen w-full"
         style={{ borderRadius: "var(--brad-2)" }}
       >
-        <div className="mb-4 p-2 bg-gray-100 rounded">
+        <div className="mb-4 p-2 bg-gray-500 rounded text-white">
           <h3 className="font-bold mb-2">Map Legend:</h3>
           <div className="grid grid-cols-2 gap-2">
             <div>🟢 レジャー</div>
@@ -189,10 +183,11 @@ function Map() {
             <div>🔵 お店</div>
           </div>
         </div>
-        {mounted && <MapComponent places={places} />}
+        {mounted && places.length > 0 && <MapComponent places={places} />}
       </div>
     </main>
   );
 }
 
 export default Map;
+
