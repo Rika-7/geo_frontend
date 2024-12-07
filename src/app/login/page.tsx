@@ -36,7 +36,7 @@ export default function Login() {
     // Handle form submission
     console.log(values)
     // Navigate to the map page
-    router.push('/map')
+    router.push('/home')
   }
 
   return (
