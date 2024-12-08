@@ -1,10 +1,28 @@
 import { useState, FC, ChangeEvent } from "react";
-import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+  Tooltip,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, ZoomIn, ZoomOut } from "lucide-react";
+import { createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+  .custom-tooltip {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+`;
 
 interface Place {
   place_id: number;
@@ -96,15 +114,32 @@ const MapControls: FC = () => {
 
   return (
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[1000]">
-      <Button variant="outline" size="sm" onClick={handleCurrentLocation}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleCurrentLocation}
+        className="bg-white text-black hover:bg-gray-200"
+      >
         <MapPin className="h-4 w-4 mr-2" />
         Current Location
       </Button>
-      <Button variant="outline" size="sm" onClick={handleZoomIn}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleZoomIn}
+        className="bg-white text-black hover:bg-gray-200"
+      >
         <ZoomIn className="h-4 w-4" />
+        <span className="ml-1">+</span>
       </Button>
-      <Button variant="outline" size="sm" onClick={handleZoomOut}>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={handleZoomOut}
+        className="bg-white text-black hover:bg-gray-200"
+      >
         <ZoomOut className="h-4 w-4" />
+        <span className="ml-1">-</span>
       </Button>
     </div>
   );
@@ -114,7 +149,7 @@ const MapComponent: FC<MapProps> = ({
   places,
   center = [35.592735510792195, 139.43884126045768],
   zoom = 13,
-  showSearch = true,
+  showSearch = false,
   showLegend = true,
   showControls = true,
 }) => {
@@ -125,11 +160,7 @@ const MapComponent: FC<MapProps> = ({
   };
 
   const isLegendNeeded = (): boolean => {
-    if (!showLegend) return false;
-    const categories = new Set(
-      places.map((place) => place.category.toLowerCase())
-    );
-    return categories.size > 1;
+    return showLegend;
   };
 
   const handleSearch = (): void => {
@@ -156,13 +187,24 @@ const MapComponent: FC<MapProps> = ({
         </div>
       )}
       {isLegendNeeded() && (
-        <div className="absolute top-16 left-4 z-[1000] bg-white p-2 rounded-md shadow">
-          <h3 className="font-bold mb-2">Map Legend:</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div>🟢 レジャー</div>
-            <div>🟠 レストラン</div>
-            <div>🟣 史跡名所</div>
-            <div>🔵 お店</div>
+        <div className="absolute top-4 left-4 z-[1000] bg-white p-2 rounded-md shadow-md">
+          <div className="grid grid-cols-1 gap-1 text-sm">
+            <div className="flex items-center">
+              <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
+              <span className="text-gray-800">レジャー</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
+              <span className="text-gray-800">レストラン</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
+              <span className="text-gray-800">史跡名所</span>
+            </div>
+            <div className="flex items-center">
+              <span className="inline-block w-4 h-4 mr-2 bg-blue-500 rounded-full"></span>
+              <span className="text-gray-800">お店</span>
+            </div>
           </div>
         </div>
       )}
@@ -170,6 +212,7 @@ const MapComponent: FC<MapProps> = ({
         center={center}
         zoom={zoom}
         scrollWheelZoom={false}
+        zoomControl={false}
         style={{ height: "100%", width: "100%", borderRadius: "var(--radius)" }}
       >
         <TileLayer
@@ -182,6 +225,13 @@ const MapComponent: FC<MapProps> = ({
             position={[place.latitude, place.longitude]}
             icon={getMarkerIcon(place.category)}
           >
+            <Tooltip
+              direction="top"
+              offset={[0, -20]}
+              className="custom-tooltip"
+            >
+              {place.placename}
+            </Tooltip>
             <Popup>
               <a
                 href={place.url}
@@ -198,6 +248,7 @@ const MapComponent: FC<MapProps> = ({
         ))}
         {showControls && <MapControls />}
       </MapContainer>
+      <GlobalStyle />
     </div>
   );
 };

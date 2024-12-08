@@ -5,13 +5,16 @@ import React, { useEffect, useState, ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuButton } from "@/components/ui/menu_button";
 
-// Dynamic import with TypeScript
-const MapComponent = dynamic(() => import("@/components/ui/map"), {
-  loading: (): ReactElement => (
-    <p className="text-center py-4">A map is loading...</p>
-  ),
-  ssr: false,
-});
+// Dynamic import with TypeScript and key changes for map initialization
+const MapComponent = dynamic(
+  () => import("@/components/ui/map").then((mod) => mod.default),
+  {
+    loading: (): ReactElement => (
+      <p className="text-center py-4">A map is loading...</p>
+    ),
+    ssr: false,
+  }
+);
 
 enum PlaceCategory {
   Eatery = "eatery",
@@ -47,6 +50,14 @@ const Places = (): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] =
     useState<PlaceCategory | null>(null);
+  const [isMapMounted, setIsMapMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMapMounted(true);
+    return () => {
+      setIsMapMounted(false);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchPlaces = async (): Promise<void> => {
@@ -58,8 +69,6 @@ const Places = (): ReactElement => {
         }
 
         const apiUrl: string = `${process.env.NEXT_PUBLIC_API_URL}/places`;
-        console.log("Fetching from:", apiUrl);
-
         const response = await fetch(apiUrl, {
           headers: {
             Accept: "application/json",
@@ -102,15 +111,38 @@ const Places = (): ReactElement => {
     setSelectedCategory(selectedCategory === category ? null : category);
   };
 
+  const MapLegend = () => (
+    <div className="bg-white p-2 rounded-md shadow-md text-sm">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex items-center">
+          <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
+          <span className="text-gray-800">レジャー</span>
+        </div>
+        <div className="flex items-center">
+          <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
+          <span className="text-gray-800">グルメ</span>
+        </div>
+        <div className="flex items-center">
+          <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
+          <span className="text-gray-800">史跡名所</span>
+        </div>
+        <div className="flex items-center">
+          <span className="inline-block w-4 h-4 mr-2 bg-blue-500 rounded-full"></span>
+          <span className="text-gray-800">お店</span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="h-screen flex flex-col">
-      <header className="flex items-center justify-center p-2 border-b">
+      <header className="flex items-center justify-center p-2">
         <h1 className="text-base text-white font-semibold">
           町田GIONスタジアム周辺情報
         </h1>
       </header>
 
-      <div className="flex justify-center p-2 border-t">
+      <div className="flex justify-center pb-2">
         <div className="w-1/2 max-w-md flex justify-between">
           {categoryButtons.map((btn) => (
             <Button
@@ -126,7 +158,7 @@ const Places = (): ReactElement => {
         </div>
       </div>
 
-      <div className="flex justify-center items-center py-2">
+      <div className="flex flex-col items-center pt-0 pb-2 space-y-2">
         <div className="w-1/2 max-w-md h-64">
           {loading && <p className="text-center py-4">Loading map data...</p>}
           {error && (
@@ -134,8 +166,9 @@ const Places = (): ReactElement => {
               Error loading map data: {error}
             </p>
           )}
-          {!loading && !error && places.length > 0 && (
+          {!loading && !error && places.length > 0 && isMapMounted && (
             <MapComponent
+              key={`map-${selectedCategory || "all"}`}
               places={filteredPlaces}
               showSearch={false}
               showLegend={false}
@@ -143,9 +176,12 @@ const Places = (): ReactElement => {
             />
           )}
         </div>
+        <div className="w-1/2 max-w-md">
+          <MapLegend />
+        </div>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-6 shadow w-1/2 max-w-md mx-auto h-64 flex flex-col">
+      <div className="bg-gray-100 rounded-lg pb-2 shadow w-1/2 max-w-md mx-auto h-64 flex flex-col">
         <div className="flex-grow flex flex-col justify-center space-y-4">
           <p className="text-sm text-gray-800 text-center mb-4">
             小野路宿里山交流館
@@ -162,8 +198,8 @@ const Places = (): ReactElement => {
         </div>
       </div>
 
-      <div className="flex justify-center space-x-2 max-w-md mx-auto mt-4 pb-2">
-        <MenuButton href="/home" label="ホーム" isActive={true} />
+      <div className="flex justify-center space-x-2 max-w-md mx-auto mt-4">
+        <MenuButton href="/home" label="ホーム" />
         <MenuButton
           href="/map"
           label={
@@ -181,6 +217,7 @@ const Places = (): ReactElement => {
               <span className="text-xs">情報</span>
             </>
           }
+          isActive={true}
         />
         <MenuButton
           href="/traffic"
