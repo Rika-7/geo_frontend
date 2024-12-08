@@ -209,6 +209,29 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
   );
 };
 
+const Legend: FC = () => (
+  <div className="absolute bottom-20 right-4 z-[1000] bg-white p-2 rounded-md shadow-md text-sm">
+    <div className="grid grid-cols-2 gap-2">
+      <div className="flex items-center">
+        <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
+        <span className="text-gray-800">レジャー</span>
+      </div>
+      <div className="flex items-center">
+        <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
+        <span className="text-gray-800">グルメ</span>
+      </div>
+      <div className="flex items-center">
+        <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
+        <span className="text-gray-800">史跡名所</span>
+      </div>
+      <div className="flex items-center">
+        <span className="inline-block w-4 h-4 mr-2 bg-blue-500 rounded-full"></span>
+        <span className="text-gray-800">お店</span>
+      </div>
+    </div>
+  </div>
+);
+
 const MapComponent: FC<MapProps> = ({
   places,
   center = [35.592735510792195, 139.43884126045768],
@@ -223,10 +246,6 @@ const MapComponent: FC<MapProps> = ({
 
   const isSearchNeeded = (): boolean => {
     return showSearch && places.length > 0;
-  };
-
-  const isLegendNeeded = (): boolean => {
-    return showLegend;
   };
 
   const handleSearch = (): void => {
@@ -273,6 +292,7 @@ const MapComponent: FC<MapProps> = ({
           />
         ))}
         {showControls && <MapControls />}
+        {showLegend && <Legend />}
       </MapContainer>
       <GlobalStyle />
     </div>
