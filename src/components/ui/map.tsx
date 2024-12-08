@@ -41,6 +41,7 @@ interface MapProps {
   showSearch?: boolean;
   showLegend?: boolean;
   showControls?: boolean;
+  onError?: () => void;
 }
 
 type CategoryIcons = {
