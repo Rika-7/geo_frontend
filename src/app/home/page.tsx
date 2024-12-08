@@ -1,9 +1,8 @@
-import React from "react"
-import { Button } from "@/components/ui/button"
-import { MenuButton } from '@/components/ui/menu_button';
-import Image from 'next/image';
-import Link from 'next/link';
-
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { MenuButton } from "@/components/ui/menu_button";
+import Image from "next/image";
+import Link from "next/link";
 
 const Home: React.FC = () => {
   return (
@@ -26,30 +25,62 @@ const Home: React.FC = () => {
         </div>
 
         <div className="bg-gray-100 rounded-lg p-6 shadow max-w-md mx-auto h-64 flex flex-col">
-          <p className="text-lg font-bold text-gray-800 text-center mb-4">GPS情報取得</p>
+          <p className="text-lg font-bold text-gray-800 text-center mb-4">
+            GPS情報取得
+          </p>
           <div className="flex-grow flex flex-col justify-center space-y-4">
             <Link href="/map">
-                <Button variant="outline" className="w-full justify-center bg-white text-center px-4 py-3 text-gray-800 font-normal hover:bg-gray-200">
+              <Button
+                variant="outline"
+                className="w-full justify-center bg-white text-center px-4 py-3 text-gray-800 font-normal hover:bg-gray-200"
+              >
                 承認する
-                </Button>
+              </Button>
             </Link>
             <Link href="/home">
-                <Button variant="outline" className="w-full justify-center bg-white text-center px-4 py-3 text-gray-800 font-normal hover:bg-gray-200">
+              <Button
+                variant="outline"
+                className="w-full justify-center bg-white text-center px-4 py-3 text-gray-800 font-normal hover:bg-gray-200"
+              >
                 承認しない
-                </Button>
+              </Button>
             </Link>
           </div>
         </div>
 
         <div className="flex justify-center space-x-4 max-w-md mx-auto">
           <MenuButton href="/home" label="ホーム" isActive={true} />
-          <MenuButton href="/map" label={<><span>登城</span><span>マップ</span></>} />
-          <MenuButton href="/places" label={<><span>周辺</span><span>情報</span></>} />
-          <MenuButton href="/traffic" label={<><span>交通</span><span>情報</span></>} />
+          <MenuButton
+            href="/map"
+            label={
+              <>
+                <span>登城</span>
+                <span>マップ</span>
+              </>
+            }
+          />
+          <MenuButton
+            href="/places"
+            label={
+              <>
+                <span>周辺</span>
+                <span>情報</span>
+              </>
+            }
+          />
+          <MenuButton
+            href="/traffic"
+            label={
+              <>
+                <span>交通</span>
+                <span>情報</span>
+              </>
+            }
+          />
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
 export default Home;

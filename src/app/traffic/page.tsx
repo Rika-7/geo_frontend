@@ -1,9 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Traffic = () => {
-  return (
-    <div>Traffic Information</div>
-  )
-}
+  return <div>Traffic Information</div>;
+};
 
 export default Traffic;
