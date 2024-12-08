@@ -41,7 +41,9 @@ interface MapProps {
   showSearch?: boolean;
   showLegend?: boolean;
   showControls?: boolean;
+  onMarkerClick?: (placeId: number) => void;
   onError?: () => void;
+  selectedPlaceId?: number | null;
 }
 
 type CategoryIcons = {
@@ -146,6 +148,67 @@ const MapControls: FC = () => {
   );
 };
 
+interface MarkerWrapperProps {
+  place: Place;
+  icon: L.Icon;
+  onMarkerClick?: (placeId: number) => void;
+  isSelected?: boolean;
+}
+
+const MarkerWrapper: FC<MarkerWrapperProps> = ({
+  place,
+  icon,
+  onMarkerClick,
+  isSelected,
+}) => {
+  const map = useMap();
+
+  const handleClick = () => {
+    if (onMarkerClick) {
+      onMarkerClick(place.place_id);
+      // Center the map on the clicked marker with a slight offset for better visibility
+      map.setView(
+        [place.latitude + 0.0005, place.longitude],
+        map.getZoom() || 13,
+        {
+          animate: true,
+          duration: 0.5,
+        }
+      );
+    }
+  };
+
+  return (
+    <Marker
+      position={[place.latitude, place.longitude]}
+      icon={icon}
+      eventHandlers={{
+        click: handleClick,
+      }}
+    >
+      <Tooltip
+        direction="top"
+        offset={[0, -20]}
+        className={`custom-tooltip ${isSelected ? "font-bold" : ""}`}
+      >
+        {place.placename}
+      </Tooltip>
+      <Popup>
+        <a
+          href={place.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 hover:underline"
+        >
+          <strong>{place.placename}</strong>
+        </a>
+        <p className="mt-2">{place.description}</p>
+        <p className="mt-1 italic">Category: {place.category}</p>
+      </Popup>
+    </Marker>
+  );
+};
+
 const MapComponent: FC<MapProps> = ({
   places,
   center = [35.592735510792195, 139.43884126045768],
@@ -153,6 +216,8 @@ const MapComponent: FC<MapProps> = ({
   showSearch = false,
   showLegend = true,
   showControls = true,
+  onMarkerClick,
+  selectedPlaceId,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -187,28 +252,6 @@ const MapComponent: FC<MapProps> = ({
           </Button>
         </div>
       )}
-      {isLegendNeeded() && (
-        <div className="absolute top-4 left-4 z-[1000] bg-white p-2 rounded-md shadow-md">
-          <div className="grid grid-cols-1 gap-1 text-sm">
-            <div className="flex items-center">
-              <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
-              <span className="text-gray-800">レジャー</span>
-            </div>
-            <div className="flex items-center">
-              <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
-              <span className="text-gray-800">レストラン</span>
-            </div>
-            <div className="flex items-center">
-              <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
-              <span className="text-gray-800">史跡名所</span>
-            </div>
-            <div className="flex items-center">
-              <span className="inline-block w-4 h-4 mr-2 bg-blue-500 rounded-full"></span>
-              <span className="text-gray-800">お店</span>
-            </div>
-          </div>
-        </div>
-      )}
       <MapContainer
         center={center}
         zoom={zoom}
@@ -221,31 +264,13 @@ const MapComponent: FC<MapProps> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {places.map((place: Place) => (
-          <Marker
+          <MarkerWrapper
             key={place.place_id}
-            position={[place.latitude, place.longitude]}
+            place={place}
             icon={getMarkerIcon(place.category)}
-          >
-            <Tooltip
-              direction="top"
-              offset={[0, -20]}
-              className="custom-tooltip"
-            >
-              {place.placename}
-            </Tooltip>
-            <Popup>
-              <a
-                href={place.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                <strong>{place.placename}</strong>
-              </a>
-              <p className="mt-2">{place.description}</p>
-              <p className="mt-1 italic">Category: {place.category}</p>
-            </Popup>
-          </Marker>
+            onMarkerClick={onMarkerClick}
+            isSelected={selectedPlaceId === place.place_id}
+          />
         ))}
         {showControls && <MapControls />}
       </MapContainer>

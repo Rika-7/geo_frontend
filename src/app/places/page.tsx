@@ -1,11 +1,17 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useEffect, useState, ReactElement } from "react";
+import React, {
+  useEffect,
+  useState,
+  ReactElement,
+  useRef,
+  useCallback,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { MenuButton } from "@/components/ui/menu_button";
+import { ExternalLink } from "lucide-react";
 
-// Dynamic import with TypeScript and key changes for map initialization
 const MapComponent = dynamic(
   () => import("@/components/ui/map").then((mod) => mod.default),
   {
@@ -51,6 +57,9 @@ const Places = (): ReactElement => {
   const [selectedCategory, setSelectedCategory] =
     useState<PlaceCategory | null>(null);
   const [isMapMounted, setIsMapMounted] = useState<boolean>(false);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  const listRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
   useEffect(() => {
     setIsMapMounted(true);
@@ -109,7 +118,42 @@ const Places = (): ReactElement => {
 
   const handleCategoryClick = (category: PlaceCategory): void => {
     setSelectedCategory(selectedCategory === category ? null : category);
+    setSelectedPlaceId(null);
   };
+
+  const scrollToPlace = useCallback((placeId: number): void => {
+    const element = listRefs.current[placeId];
+    const container = listContainerRef.current;
+
+    if (element && container) {
+      // Calculate the scroll position to center the element
+      const containerHeight = container.clientHeight;
+      const elementHeight = element.clientHeight;
+      const scrollTop =
+        element.offsetTop - containerHeight / 2 + elementHeight / 2;
+
+      container.scrollTo({
+        top: scrollTop,
+        behavior: "smooth",
+      });
+    }
+  }, []);
+
+  const handleMarkerClick = useCallback(
+    (placeId: number) => {
+      setSelectedPlaceId(placeId);
+      scrollToPlace(placeId); // Add scrolling when clicking marker
+    },
+    [scrollToPlace]
+  );
+
+  const handleListItemClick = useCallback(
+    (placeId: number) => {
+      setSelectedPlaceId(placeId);
+      scrollToPlace(placeId);
+    },
+    [scrollToPlace]
+  );
 
   const MapLegend = () => (
     <div className="bg-white p-2 rounded-md shadow-md text-sm">
@@ -131,6 +175,65 @@ const Places = (): ReactElement => {
           <span className="text-gray-800">お店</span>
         </div>
       </div>
+    </div>
+  );
+
+  const PlacesList = () => (
+    <div
+      ref={listContainerRef}
+      className="overflow-y-auto h-full scroll-smooth"
+    >
+      {filteredPlaces.map((place) => (
+        <div
+          key={place.place_id}
+          ref={(el) => {
+            listRefs.current[place.place_id] = el;
+          }}
+          className={`p-3 border-b border-gray-200 last:border-none cursor-pointer transition-all duration-300 ${
+            selectedPlaceId === place.place_id
+              ? "bg-blue-50 shadow-md border-l-4 border-l-blue-500"
+              : "hover:bg-gray-50 border-l-4 border-l-transparent"
+          }`}
+          onClick={() => handleListItemClick(place.place_id)}
+        >
+          <div className="flex justify-between items-start">
+            <h3
+              className={`text-sm font-medium ${
+                selectedPlaceId === place.place_id
+                  ? "text-blue-900"
+                  : "text-gray-900"
+              }`}
+            >
+              {place.placename}
+            </h3>
+            {place.url && (
+              <a
+                href={place.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
+          <p
+            className={`text-xs mt-1 ${
+              selectedPlaceId === place.place_id
+                ? "text-blue-800"
+                : "text-gray-600"
+            }`}
+          >
+            {place.description}
+          </p>
+        </div>
+      ))}
+      {filteredPlaces.length === 0 && (
+        <p className="text-center text-gray-500 py-4">
+          {loading ? "Loading places..." : "No places found"}
+        </p>
+      )}
     </div>
   );
 
@@ -173,6 +276,8 @@ const Places = (): ReactElement => {
               showSearch={false}
               showLegend={false}
               showControls={true}
+              onMarkerClick={handleMarkerClick}
+              selectedPlaceId={selectedPlaceId}
             />
           )}
         </div>
@@ -182,20 +287,7 @@ const Places = (): ReactElement => {
       </div>
 
       <div className="bg-gray-100 rounded-lg pb-2 shadow w-1/2 max-w-md mx-auto h-64 flex flex-col">
-        <div className="flex-grow flex flex-col justify-center space-y-4">
-          <p className="text-sm text-gray-800 text-center mb-4">
-            小野路宿里山交流館
-            <br />
-            江戸時代、小野路宿にあった旅籠
-            <br />
-            はたご・旧「角屋かどや」を改修した施設
-          </p>
-          <p className="text-sm text-gray-800 text-center mb-4">
-            町田薬師池公園
-            <br />
-            四季彩の杜
-          </p>
-        </div>
+        <PlacesList />
       </div>
 
       <div className="flex justify-center space-x-2 max-w-md mx-auto mt-4">
