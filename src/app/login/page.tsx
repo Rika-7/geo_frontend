@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import React from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -12,31 +12,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   jleagueId: z.string().min(1, { message: "JリーグIDを入力してください" }),
-  password: z.string().min(6, { message: "パスワードは6文字以上で入力してください" }),
-})
+  password: z
+    .string()
+    .min(6, { message: "パスワードは6文字以上で入力してください" }),
+});
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       jleagueId: "",
       password: "",
     },
-  })
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Handle form submission
-    console.log(values)
+    console.log(values);
     // Navigate to the map page
-    router.push('/home')
+    router.push("/home");
   }
 
   return (
@@ -58,7 +60,10 @@ export default function Login() {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-md mx-auto">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 max-w-md mx-auto"
+          >
             <FormField
               control={form.control}
               name="jleagueId"
@@ -66,7 +71,11 @@ export default function Login() {
                 <FormItem>
                   <FormLabel className="text-white">JリーグID</FormLabel>
                   <FormControl>
-                    <Input placeholder="JリーグIDを入力" {...field} className="bg-white text-black" />
+                    <Input
+                      placeholder="JリーグIDを入力"
+                      {...field}
+                      className="bg-white text-black"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -79,19 +88,26 @@ export default function Login() {
                 <FormItem>
                   <FormLabel className="text-white">パスワード</FormLabel>
                   <FormControl>
-                    <Input placeholder="パスワードを入力" type="password" {...field} className="bg-white text-black" />
+                    <Input
+                      placeholder="パスワードを入力"
+                      type="password"
+                      {...field}
+                      className="bg-white text-black"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white">
+            <Button
+              type="submit"
+              className="w-full bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white"
+            >
               ログイン
             </Button>
           </form>
         </Form>
       </main>
     </div>
-  )
+  );
 }
-

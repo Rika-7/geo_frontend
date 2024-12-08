@@ -3,22 +3,21 @@
 import dynamic from "next/dynamic";
 import React, { useEffect, useState, ReactElement } from "react";
 import { Button } from "@/components/ui/button";
-import { MenuButton } from '@/components/ui/menu_button';
+import { MenuButton } from "@/components/ui/menu_button";
 
 // Dynamic import with TypeScript
-const MapComponent = dynamic(
-  () => import("@/components/ui/map"),
-  {
-    loading: (): ReactElement => <p className="text-center py-4">A map is loading...</p>,
-    ssr: false,
-  }
-);
+const MapComponent = dynamic(() => import("@/components/ui/map"), {
+  loading: (): ReactElement => (
+    <p className="text-center py-4">A map is loading...</p>
+  ),
+  ssr: false,
+});
 
 enum PlaceCategory {
-  Eatery = 'eatery',
-  Sightseeing = 'sightseeing',
-  CulturalAttraction = 'cultural_attraction',
-  Shop = 'shop'
+  Eatery = "eatery",
+  Sightseeing = "sightseeing",
+  CulturalAttraction = "cultural_attraction",
+  Shop = "shop",
 }
 
 interface Place {
@@ -37,22 +36,25 @@ interface CategoryButton {
 }
 
 const categoryButtons: CategoryButton[] = [
-  { category: PlaceCategory.Eatery, label: 'グルメ' },
-  { category: PlaceCategory.Sightseeing, label: 'レジャー' },
-  { category: PlaceCategory.CulturalAttraction, label: '史跡名所' }
+  { category: PlaceCategory.Eatery, label: "グルメ" },
+  { category: PlaceCategory.Sightseeing, label: "レジャー" },
+  { category: PlaceCategory.CulturalAttraction, label: "史跡名所" },
 ];
 
 const Places = (): ReactElement => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<PlaceCategory | null>(null);
 
   useEffect(() => {
     const fetchPlaces = async (): Promise<void> => {
       try {
         if (!process.env.NEXT_PUBLIC_API_URL) {
-          throw new Error("API URL is not configured - please check environment variables");
+          throw new Error(
+            "API URL is not configured - please check environment variables"
+          );
         }
 
         const apiUrl: string = `${process.env.NEXT_PUBLIC_API_URL}/places`;
