@@ -12,6 +12,7 @@ interface Place {
   latitude: number;
   longitude: number;
   url: string;
+  onError?: () => void;
 }
 
 // Sample places data
