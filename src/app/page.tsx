@@ -1,8 +1,8 @@
-import React from "react"
-import { ChevronDown } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import Image from 'next/image'
-import Link from 'next/link'
+import React from "react";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
 const Top: React.FC = () => {
   return (
@@ -25,38 +25,37 @@ const Top: React.FC = () => {
         </div>
 
         <div className="bg-gray-100 rounded-lg p-4 shadow space-y-2 max-w-md mx-auto">
-          <p className="text-lg font-bold text-gray-800 text-center mb-4">試合情報</p>
+          <p className="text-lg font-bold text-gray-800 text-center mb-4">
+            試合情報
+          </p>
           <div className="space-y-3">
-            <Button variant="outline" className="w-full justify-between bg-white text-left px-4 py-3 text-gray-800 font-normal hover:bg-gray-200">
-              節・選択してください
-              <ChevronDown className="h-5 w-5 text-gray-400" />
-            </Button>
-            <Button variant="outline" className="w-full justify-between bg-white text-left px-4 py-3 text-gray-800 font-normal hover:bg-gray-200">
-              日時・選択してください
-              <ChevronDown className="h-5 w-5 text-gray-400" />
-            </Button>
-            <Button variant="outline" className="w-full justify-between bg-white text-left px-4 py-3 text-gray-800 font-normal hover:bg-gray-200">
-            対戦チーム・選択してください
+            <Button
+              variant="outline"
+              className="w-full justify-between bg-white text-left px-4 py-3 text-gray-800 font-normal hover:bg-gray-200"
+            >
+              日時・対戦チームを選択してください
               <ChevronDown className="h-5 w-5 text-gray-400" />
             </Button>
           </div>
         </div>
-        <div className="space-y-4 max-w-md mx-auto"> 
+        <div className="space-y-4 max-w-md mx-auto">
           <Link href="/login" className="w-full block">
             <Button className="w-full bg-[#FF6E7F] hover:bg-[#FF5C6F] text-white">
               ログイン
             </Button>
           </Link>
           <Link href="https://www.jleague.jp/app/" className="w-full block">
-            <Button variant="outline" className="w-full bg-transparent text-white border-white hover:bg-white hover:text-black">
+            <Button
+              variant="outline"
+              className="w-full bg-transparent text-white border-white hover:bg-white hover:text-black"
+            >
               新規登録
             </Button>
           </Link>
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Top
-
+export default Top;
