@@ -1,4 +1,4 @@
-import { useState, FC, ChangeEvent } from "react";
+import { useState, FC, ChangeEvent, useEffect } from "react";
 import {
   MapContainer,
   Marker,
@@ -44,6 +44,11 @@ interface MapProps {
   onMarkerClick?: (placeId: number) => void;
   onError?: () => void;
   selectedPlaceId?: number | null;
+  currentLocation?: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  } | null;
 }
 
 type CategoryIcons = {
@@ -232,6 +237,17 @@ const Legend: FC = () => (
   </div>
 );
 
+const currentLocationIcon = L.icon({
+  iconUrl:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+  shadowUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 const MapComponent: FC<MapProps> = ({
   places,
   center = [35.592735510792195, 139.43884126045768],
@@ -241,12 +257,9 @@ const MapComponent: FC<MapProps> = ({
   showControls = true,
   onMarkerClick,
   selectedPlaceId,
+  currentLocation,
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const isSearchNeeded = (): boolean => {
-    return showSearch && places.length > 0;
-  };
 
   const handleSearch = (): void => {
     console.log("Searching for:", searchQuery);
@@ -256,9 +269,29 @@ const MapComponent: FC<MapProps> = ({
     setSearchQuery(e.target.value);
   };
 
+  // Add a component to handle map centering on current location
+  const MapHandler = ({
+    currentLocation,
+  }: {
+    currentLocation: MapProps["currentLocation"];
+  }) => {
+    const map = useMap();
+
+    useEffect(() => {
+      if (currentLocation) {
+        map.setView(
+          [currentLocation.latitude, currentLocation.longitude],
+          map.getZoom()
+        );
+      }
+    }, [currentLocation, map]);
+
+    return null;
+  };
+
   return (
     <div className="h-full w-full relative">
-      {isSearchNeeded() && (
+      {showSearch && (
         <div className="absolute top-4 left-4 right-4 z-[1000] flex space-x-2">
           <Input
             placeholder="Search location..."
@@ -291,8 +324,31 @@ const MapComponent: FC<MapProps> = ({
             isSelected={selectedPlaceId === place.place_id}
           />
         ))}
+        {currentLocation && (
+          <Marker
+            position={[currentLocation.latitude, currentLocation.longitude]}
+            icon={currentLocationIcon}
+          >
+            <Tooltip
+              direction="top"
+              offset={[0, -20]}
+              className="custom-tooltip"
+            >
+              Your Location
+            </Tooltip>
+            <Popup>
+              <div className="text-sm">
+                <strong>Your Current Location</strong>
+                <p className="mt-1">
+                  Accuracy: ±{Math.round(currentLocation.accuracy)}m
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
         {showControls && <MapControls />}
         {showLegend && <Legend />}
+        <MapHandler currentLocation={currentLocation} />
       </MapContainer>
       <GlobalStyle />
     </div>
