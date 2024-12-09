@@ -157,7 +157,7 @@ const Places = (): ReactElement => {
 
   const MapLegend = () => (
     <div className="bg-white p-2 rounded-md shadow-md text-sm">
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-4 gap-2">
         <div className="flex items-center">
           <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
           <span className="text-gray-800">レジャー</span>
@@ -244,7 +244,6 @@ const Places = (): ReactElement => {
           町田GIONスタジアム周辺情報
         </h1>
       </header>
-
       <div className="flex justify-center pb-2">
         <div className="w-1/2 max-w-md flex justify-between">
           {categoryButtons.map((btn) => (
@@ -262,7 +261,7 @@ const Places = (): ReactElement => {
       </div>
 
       <div className="flex flex-col items-center pt-0 pb-2 space-y-2">
-        <div className="w-1/2 max-w-md h-64">
+        <div className="relative h-[400px] w-full">
           {loading && <p className="text-center py-4">Loading map data...</p>}
           {error && (
             <p className="text-center py-4 text-red-500">
@@ -270,26 +269,27 @@ const Places = (): ReactElement => {
             </p>
           )}
           {!loading && !error && places.length > 0 && isMapMounted && (
-            <MapComponent
-              key={`map-${selectedCategory || "all"}`}
-              places={filteredPlaces}
-              showSearch={false}
-              showLegend={false}
-              showControls={true}
-              onMarkerClick={handleMarkerClick}
-              selectedPlaceId={selectedPlaceId}
-            />
+            <>
+              <div className="absolute inset-0 rounded-lg overflow-hidden border">
+                <MapComponent
+                  places={filteredPlaces}
+                  showSearch={false}
+                  showLegend={false}
+                  showControls={true}
+                  onMarkerClick={handleMarkerClick}
+                  selectedPlaceId={selectedPlaceId}
+                />
+              </div>
+              <div className="absolute bottom-4 right-4 z-[1000]">
+                <MapLegend />
+              </div>
+            </>
           )}
         </div>
-        <div className="w-1/2 max-w-md">
-          <MapLegend />
-        </div>
       </div>
-
-      <div className="bg-gray-100 rounded-lg pb-2 shadow w-1/2 max-w-md mx-auto h-64 flex flex-col">
+      <div className="bg-gray-100 rounded-lg pb-2 shadow relative h-64 flex flex-col">
         <PlacesList />
       </div>
-
       <div className="flex justify-center space-x-2 max-w-md mx-auto mt-4">
         <MenuButton href="/home" label="ホーム" />
         <MenuButton
