@@ -43,7 +43,9 @@ export default function MapPage() {
   const fetchLocationData = async () => {
     try {
       // Replace with your FastAPI backend URL
-      const response = await fetch("http://localhost:8000/locations");
+      const response = await fetch(
+        "https://tech0-gen-7-step4-student-finalproject-4-exeabgd9eyekb7c2.canadacentral-01.azurewebsites.net/locations"
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch location data");
       }
