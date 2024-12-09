@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { MenuButton } from "@/components/ui/menu_button";
+import CurrentLocationDisplay from "@/components/ui/current_location";
+import VisitorLegend from "@/components/ui/visitor_legend";
 
 interface Place {
   place_id: number;
@@ -52,19 +54,14 @@ const Map = dynamic(
 
 export default function MapPage() {
   const [mounted, setMounted] = useState(false);
-  const [key, setKey] = useState(0); // Add key for forced remounting if needed
+  const [mapKey, setMapKey] = useState("initial");
 
-  // Handle client-side mounting
   useEffect(() => {
     setMounted(true);
-    return () => {
-      setMounted(false);
-    };
   }, []);
 
-  // Force remount map if needed
   const handleMapError = () => {
-    setKey((prev) => prev + 1);
+    setMapKey(Date.now().toString());
   };
 
   if (!mounted) {
@@ -81,7 +78,7 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      <main className="p-4 md:p-6 space-y-4">
+      <main className="p-4 md:p-2 space-y-4">
         <div className="text-center">
           <h1 className="text-xl font-bold">町田GIONスタジアムへ！</h1>
           <h2 className="text-lg mt-2">いざ登城！</h2>
@@ -89,23 +86,23 @@ export default function MapPage() {
           <h3 className="text-lg mt-2">キックオフ 14:00</h3>
         </div>
 
-        <div className="h-[400px] w-full rounded-lg overflow-hidden border">
-          {mounted && (
-            <Map
-              key={`map-${key}`} // Add key for forced remounting
-              places={samplePlaces}
-              center={[35.592735510792195, 139.43884126045768]}
-              zoom={15}
-              showLegend={true}
-              showControls={true}
-              showSearch={false}
-              onError={handleMapError} // Add error handler
-            />
-          )}
+        <CurrentLocationDisplay />
+
+        <div className="h-[400px] w-full rounded-lg overflow-hidden border text-gray-800">
+          <Map
+            key={mapKey}
+            places={samplePlaces}
+            center={[35.592735510792195, 139.43884126045768]}
+            zoom={15}
+            showLegend={false}
+            showControls={true}
+            showSearch={false}
+            onError={handleMapError}
+          />
         </div>
 
-        <div className="mt-4 text-sm text-gray-300">
-          * Click on markers to view more information about each location
+        <div className="relative">
+          <VisitorLegend />
         </div>
 
         <div className="flex justify-center space-x-2 sm:space-x-4 max-w-md mx-auto">
