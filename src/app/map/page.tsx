@@ -24,7 +24,7 @@ function CountdownTimer() {
 
     const interval = setInterval(() => {
       const now = new Date();
-      const difference = kickoffTime - now;
+      const difference = kickoffTime.getTime() - now.getTime();
 
       if (difference > 0) {
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -43,17 +43,19 @@ function CountdownTimer() {
   }, []);
 
   return (
-    <div style={{
-      position: "absolute",
-      top: "10px",
-      right: "10px",
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
-      color: "white",
-      padding: "8px 12px",
-      borderRadius: "8px",
-      fontSize: "18px", // フォントサイズを大きく
-      fontWeight: "bold" // 太字に設定
-    }}>
+    <div
+      style={{
+        position: "absolute",
+        top: "10px",
+        right: "10px",
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        color: "white",
+        padding: "8px 12px",
+        borderRadius: "8px",
+        fontSize: "18px", // フォントサイズを大きく
+        fontWeight: "bold", // 太字に設定
+      }}
+    >
       <h3>{timeLeft}</h3>
     </div>
   );
@@ -132,7 +134,7 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-       {/* CountdownTimer を追加 */}
+      {/* CountdownTimer を追加 */}
       <CountdownTimer />
       <main className="p-4 md:p-2 space-y-4">
         <div className="text-center">
@@ -142,15 +144,23 @@ export default function MapPage() {
           <h3 className="text-lg mt-2">キックオフ 14:00</h3>
         </div>
 
-        <div style={{ position: 'absolute', top: '10px', left: '10px', width: '150px', height: '150px' }}>
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            width: "150px",
+            height: "150px",
+          }}
+        >
           <img
             src="/images/castle.png" // 登城画像
             alt="Castle"
             style={{
-              width: '75%',
-              height: '75%',
-              objectFit: 'contain', // 比率を保持
-              objectPosition: 'top left', // 画像を左上に配置
+              width: "75%",
+              height: "75%",
+              objectFit: "contain", // 比率を保持
+              objectPosition: "top left", // 画像を左上に配置
             }}
           />
         </div>
