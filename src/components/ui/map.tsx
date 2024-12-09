@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, ZoomIn, ZoomOut } from "lucide-react";
 import { createGlobalStyle } from "styled-components";
+import { visitorsByGroup } from "@/components/ui/visitor_legend";
 
 const GlobalStyle = createGlobalStyle`
   .custom-tooltip {
@@ -34,8 +35,18 @@ interface Place {
   url: string;
 }
 
+interface LocationData {
+  J_league_id: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  timestamp: string;
+  favorite_club: string;
+}
+
 interface MapProps {
   places: Place[];
+  locationData?: LocationData[];
   center?: [number, number];
   zoom?: number;
   showSearch?: boolean;
@@ -96,6 +107,36 @@ const categoryIcons: CategoryIcons = {
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
   }),
+};
+
+const getSupporterIcon = (favorite_club: string): L.Icon => {
+  // Remove "サポーター" from the group name to match with favorite_club
+  const groupData = visitorsByGroup.find(
+    (g) => g.group.replace("サポーター", "") === favorite_club
+  );
+
+  const color = groupData ? groupData.color : "#808080";
+
+  // Create a custom icon with the exact color from visitorsByGroup
+  const svgIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">
+      <path fill="${color}" d="M12.5 0C5.596 0 0 5.596 0 12.5c0 10.937 12.5 28.5 12.5 28.5s12.5-17.563 12.5-28.5C25 5.596 19.404 0 12.5 0zm0 17.5c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/>
+    </svg>
+  `;
+
+  // Create a blob URL from the SVG
+  const blob = new Blob([svgIcon], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+
+  return L.icon({
+    iconUrl: url,
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
 };
 
 const getMarkerIcon = (category: string): L.Icon => {
@@ -250,6 +291,7 @@ const currentLocationIcon = L.icon({
 
 const MapComponent: FC<MapProps> = ({
   places,
+  locationData = [],
   center = [35.592735510792195, 139.43884126045768],
   zoom = 13,
   showSearch = false,
@@ -269,7 +311,6 @@ const MapComponent: FC<MapProps> = ({
     setSearchQuery(e.target.value);
   };
 
-  // Add a component to handle map centering on current location
   const MapHandler = ({
     currentLocation,
   }: {
@@ -315,6 +356,8 @@ const MapComponent: FC<MapProps> = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Display places */}
         {places.map((place: Place) => (
           <MarkerWrapper
             key={place.place_id}
@@ -324,6 +367,36 @@ const MapComponent: FC<MapProps> = ({
             isSelected={selectedPlaceId === place.place_id}
           />
         ))}
+
+        {/* Display supporter locations */}
+        {locationData.map((location) => (
+          <Marker
+            key={location.J_league_id}
+            position={[location.latitude, location.longitude]}
+            icon={getSupporterIcon(location.favorite_club)}
+          >
+            <Tooltip
+              direction="top"
+              offset={[0, -20]}
+              className="custom-tooltip"
+            >
+              {location.favorite_club}
+            </Tooltip>
+            <Popup>
+              <div className="text-sm">
+                <strong>{location.favorite_club}</strong>
+                <p className="mt-1">
+                  Accuracy: ±{Math.round(location.accuracy)}m
+                </p>
+                <p className="mt-1">
+                  Time: {new Date(location.timestamp).toLocaleString()}
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+
+        {/* Display current location */}
         {currentLocation && (
           <Marker
             position={[currentLocation.latitude, currentLocation.longitude]}
@@ -346,6 +419,7 @@ const MapComponent: FC<MapProps> = ({
             </Popup>
           </Marker>
         )}
+
         {showControls && <MapControls />}
         {showLegend && <Legend />}
         <MapHandler currentLocation={currentLocation} />

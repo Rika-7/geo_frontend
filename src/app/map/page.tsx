@@ -6,40 +6,15 @@ import { MenuButton } from "@/components/ui/menu_button";
 import CurrentLocationDisplay from "@/components/ui/current_location";
 import VisitorLegend from "@/components/ui/visitor_legend";
 
-interface Place {
-  place_id: number;
-  placename: string;
-  description: string;
-  category: string;
+interface LocationData {
+  J_league_id: string;
   latitude: number;
   longitude: number;
-  url: string;
-  onError?: () => void;
+  accuracy: number;
+  timestamp: string;
+  favorite_club: string;
 }
 
-// Sample places data
-const samplePlaces: Place[] = [
-  {
-    place_id: 1,
-    placename: "Tama Plaza Station",
-    description: "Major railway station in Yokohama",
-    category: "cultural_attraction",
-    latitude: 35.592735510792195,
-    longitude: 139.43884126045768,
-    url: "https://example.com/tama-plaza",
-  },
-  {
-    place_id: 2,
-    placename: "Tama Plaza Terrace",
-    description: "Shopping mall with various stores and restaurants",
-    category: "shop",
-    latitude: 35.59338,
-    longitude: 139.43851,
-    url: "https://example.com/terrace",
-  },
-];
-
-// CountdownTimer コンポーネント
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState("");
 
@@ -100,21 +75,55 @@ const Map = dynamic(
 export default function MapPage() {
   const [mounted, setMounted] = useState(false);
   const [mapKey, setMapKey] = useState("initial");
+  const [locationData, setLocationData] = useState<LocationData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    fetchLocationData();
   }, []);
+
+  const fetchLocationData = async () => {
+    try {
+      // Replace with your FastAPI backend URL
+      const response = await fetch(
+        "https://tech0-gen-7-step4-student-finalproject-4-exeabgd9eyekb7c2.canadacentral-01.azurewebsites.net/locations"
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch location data");
+      }
+      const data = await response.json();
+      setLocationData(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+      setLoading(false);
+    }
+  };
 
   const handleMapError = () => {
     setMapKey(Date.now().toString());
   };
 
-  if (!mounted) {
+  if (!mounted || loading) {
     return (
       <div className="min-h-screen bg-black text-white font-sans">
         <main className="p-4 md:p-6 space-y-4">
           <div className="text-center">
             <h1 className="text-xl font-bold">Loading...</h1>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white font-sans">
+        <main className="p-4 md:p-6 space-y-4">
+          <div className="text-center">
+            <h1 className="text-xl font-bold text-red-500">Error: {error}</h1>
           </div>
         </main>
       </div>
@@ -151,9 +160,10 @@ export default function MapPage() {
         <div className="h-[400px] w-full rounded-lg overflow-hidden border text-gray-800">
           <Map
             key={mapKey}
-            places={samplePlaces}
+            locationData={locationData}
             center={[35.592735510792195, 139.43884126045768]}
             zoom={15}
+            places={[]} // Add the missing places property
             showLegend={false}
             showControls={true}
             showSearch={false}
