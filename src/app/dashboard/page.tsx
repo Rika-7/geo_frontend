@@ -15,7 +15,10 @@ export default function DashboardPage() {
           <Card className="bg-gray-800 text-white">
             <CardHeader>
               <CardTitle className="text-lg font-medium">
-                全来場者数　（町田ゼルビア vs 川崎フロンターレ）
+                全来場者数
+                <br /> 　町田ゼルビア vs 川崎フロンターレ
+                <br />
+                　町田GIONスタジアム
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -60,7 +63,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 md:grid-cols-2">
           <Chart
             data={visitorData}
-            title="Visitors Over Time (8:00 - 20:00)"
+            title="時間ごとの来場者数推移 (8:00 - 20:00)"
             type="line"
             xKey="time"
             yKey="visitors"
@@ -68,7 +71,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-center">
             <Chart
               data={visitorsByGroup}
-              title="Total Visitors by Group"
+              title="サポートクラブ別の来場者数"
               type="pie"
               xKey="group"
               yKey="visitors"
