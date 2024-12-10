@@ -20,7 +20,7 @@ function CountdownTimer() {
 
   useEffect(() => {
     const kickoffTime = new Date();
-    kickoffTime.setHours(13, 45, 0, 0); // 14:00に設定
+    kickoffTime.setHours(24, 0, 0, 0); // 14:00に設定
 
     const interval = setInterval(() => {
       const now = new Date();
@@ -44,14 +44,10 @@ function CountdownTimer() {
 
   return (
     <div style={{
-      position: "absolute",
-      top: "10px",
-      right: "10px",
       backgroundColor: "rgba(0, 0, 0, 0.6)",
       color: "white",
-      padding: "8px 12px",
-      borderRadius: "8px",
-      fontSize: "18px", // フォントサイズを大きく
+      padding: "4px 12px",
+      fontSize: "20px", // フォントサイズを大きく
       fontWeight: "bold" // 太字に設定
     }}>
       <h3>{timeLeft}</h3>
@@ -132,27 +128,14 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-       {/* CountdownTimer を追加 */}
-      <CountdownTimer />
       <main className="p-4 md:p-2 space-y-4">
         <div className="text-center">
-          <h1 className="text-xl font-bold">町田GIONスタジアムへ！</h1>
-          <h2 className="text-lg mt-2">いざ登城！</h2>
-          <h3 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h3>
-          <h3 className="text-lg mt-2">キックオフ 14:00</h3>
-        </div>
-
-        <div style={{ position: 'absolute', top: '10px', left: '10px', width: '150px', height: '150px' }}>
-          <img
-            src="/images/castle.png" // 登城画像
-            alt="Castle"
-            style={{
-              width: '75%',
-              height: '75%',
-              objectFit: 'contain', // 比率を保持
-              objectPosition: 'top left', // 画像を左上に配置
-            }}
-          />
+          <h1 className="text-xl font-bold">町田GIONスタジアムへ いざ登城！</h1>
+          <h2 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h2>
+          <h3 className="text-lg mt-2">キックオフ 15:00</h3>
+          <div style={{ textAlign: "center", margin: "10px 0" }}>
+            <CountdownTimer />
+          </div>
         </div>
 
         <CurrentLocationDisplay />
