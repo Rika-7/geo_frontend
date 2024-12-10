@@ -15,12 +15,23 @@ interface LocationData {
   favorite_club: string;
 }
 
-function CountdownTimer() {
-  const [timeLeft, setTimeLeft] = useState("");
+interface MapProps {
+  locationData: LocationData[];
+  center: [number, number];
+  zoom: number;
+  places: unknown[];
+  showLegend: boolean;
+  showControls: boolean;
+  showSearch: boolean;
+  onError: () => void;
+}
+
+const CountdownTimer: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState<string>("");
 
   useEffect(() => {
     const kickoffTime = new Date();
-    kickoffTime.setHours(13, 45, 0, 0); // 14:00に設定
+    kickoffTime.setHours(24, 0, 0, 0);
 
     const interval = setInterval(() => {
       const now = new Date();
@@ -35,7 +46,7 @@ function CountdownTimer() {
         );
       } else {
         setTimeLeft("⚽");
-        clearInterval(interval); // タイマー停止
+        clearInterval(interval);
       }
     }, 1000);
 
@@ -45,25 +56,26 @@ function CountdownTimer() {
   return (
     <div
       style={{
-        position: "absolute",
-        top: "10px",
-        right: "10px",
         backgroundColor: "rgba(0, 0, 0, 0.6)",
         color: "white",
-        padding: "8px 12px",
+        padding: "4px 12px",
         borderRadius: "8px",
-        fontSize: "18px", // フォントサイズを大きく
-        fontWeight: "bold", // 太字に設定
+        fontSize: "20px",
+        fontWeight: "bold",
+        display: "inline-block",
+        margin: "0 auto",
       }}
     >
       <h3>{timeLeft}</h3>
     </div>
   );
-}
+};
 
-// Dynamically import the Map component with SSR disabled
-const Map = dynamic(
-  () => import("@/components/ui/map").then((mod) => mod.default),
+const Map = dynamic<MapProps>(
+  () =>
+    import("@/components/ui/map").then(
+      (mod) => mod.default as React.ComponentType<MapProps>
+    ),
   {
     loading: () => (
       <div className="w-full h-[400px] flex items-center justify-center bg-gray-100 rounded-lg">
@@ -74,11 +86,11 @@ const Map = dynamic(
   }
 );
 
-export default function MapPage() {
-  const [mounted, setMounted] = useState(false);
-  const [mapKey, setMapKey] = useState("initial");
+const MapPage: React.FC = () => {
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [mapKey, setMapKey] = useState<string>("initial");
   const [locationData, setLocationData] = useState<LocationData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -86,9 +98,8 @@ export default function MapPage() {
     fetchLocationData();
   }, []);
 
-  const fetchLocationData = async () => {
+  const fetchLocationData = async (): Promise<void> => {
     try {
-      // Replace with your FastAPI backend URL
       const response = await fetch(
         "https://tech0-gen-7-step4-student-finalproject-4-exeabgd9eyekb7c2.canadacentral-01.azurewebsites.net/locations"
       );
@@ -104,7 +115,7 @@ export default function MapPage() {
     }
   };
 
-  const handleMapError = () => {
+  const handleMapError = (): void => {
     setMapKey(Date.now().toString());
   };
 
@@ -134,35 +145,16 @@ export default function MapPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      {/* CountdownTimer を追加 */}
-      <CountdownTimer />
       <main className="p-4 md:p-2 space-y-4">
         <div className="text-center">
-          <h1 className="text-xl font-bold">町田GIONスタジアムへ！</h1>
-          <h2 className="text-lg mt-2">いざ登城！</h2>
-          <h3 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h3>
-          <h3 className="text-lg mt-2">キックオフ 14:00</h3>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            width: "150px",
-            height: "150px",
-          }}
-        >
-          <img
-            src="/images/castle.png" // 登城画像
-            alt="Castle"
-            style={{
-              width: "75%",
-              height: "75%",
-              objectFit: "contain", // 比率を保持
-              objectPosition: "top left", // 画像を左上に配置
-            }}
-          />
+          <h1 className="text-xl font-bold">
+            町田GIONスタジアムへ！ いざ登城！
+          </h1>
+          <h2 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h2>
+          <h2 className="text-lg mt-2">キックオフ 14:00</h2>
+          <div className="flex justify-center mt-4">
+            <CountdownTimer />
+          </div>
         </div>
 
         <CurrentLocationDisplay />
@@ -173,7 +165,7 @@ export default function MapPage() {
             locationData={locationData}
             center={[35.592735510792195, 139.43884126045768]}
             zoom={15}
-            places={[]} // Add the missing places property
+            places={[]}
             showLegend={false}
             showControls={true}
             showSearch={false}
@@ -219,4 +211,6 @@ export default function MapPage() {
       </main>
     </div>
   );
-}
+};
+
+export default MapPage;
