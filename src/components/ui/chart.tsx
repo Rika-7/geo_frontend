@@ -33,7 +33,8 @@ interface CustomizedLabelProps {
   innerRadius: number;
   outerRadius: number;
   percent: number;
-  name: string;
+  index: number;
+  payload: { group: string; visitors: number };
 }
 
 const renderCustomizedLabel = ({
@@ -43,22 +44,83 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-  name,
+  index,
+  payload,
 }: CustomizedLabelProps) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  const isLargeSegment = percent > 0.15;
+  const adjustedMidAngle = midAngle < 0 ? midAngle + 360 : midAngle;
+
+  // Slightly increased base radius for better spacing
+  const radius = isLargeSegment
+    ? innerRadius + (outerRadius - innerRadius) * 0.5
+    : outerRadius * 1.5; // Increased from 1.4 to 1.5 for slightly more space
+
+  // Calculate initial x and y
+  let x = cx + radius * Math.cos(-midAngle * RADIAN);
+  let y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  // Modest adjustments for better separation
+  let verticalOffset = 0;
+  let horizontalOffset = 0;
+
+  if (!isLargeSegment) {
+    if (adjustedMidAngle >= 0 && adjustedMidAngle < 90) {
+      // Top right
+      verticalOffset = -25 * (1 + (index % 2)); // Slightly increased from -20
+      horizontalOffset = 15; // Slightly increased from 10
+    } else if (adjustedMidAngle >= 90 && adjustedMidAngle < 180) {
+      // Bottom right
+      verticalOffset = 25 * (1 + (index % 2));
+      horizontalOffset = 15;
+    } else if (adjustedMidAngle >= 180 && adjustedMidAngle < 270) {
+      // Bottom left
+      verticalOffset = 25 * (1 + (index % 2));
+      horizontalOffset = -15;
+    } else {
+      // Top left
+      verticalOffset = -25 * (1 + (index % 2));
+      horizontalOffset = -15;
+    }
+
+    x += horizontalOffset;
+    y += verticalOffset;
+  }
+
+  let textAnchor = "middle";
+  if (x > cx) {
+    textAnchor = "start";
+  } else if (x < cx) {
+    textAnchor = "end";
+  }
+
+  const formattedPercent = (percent * 100).toFixed(0);
+  const labelText = `${payload.group} ${formattedPercent}%`;
+
+  const labelLine = !isLargeSegment ? (
+    <path
+      d={`M${cx + outerRadius * Math.cos(-midAngle * RADIAN)},${
+        cy + outerRadius * Math.sin(-midAngle * RADIAN)
+      }L${x},${y}`}
+      stroke="white"
+      fill="none"
+    />
+  ) : null;
 
   return (
-    <text
-      x={x}
-      y={y}
-      fill="white"
-      textAnchor={x > cx ? "start" : "end"}
-      dominantBaseline="central"
-    >
-      {`${name} ${(percent * 100).toFixed(0)}%`}
-    </text>
+    <>
+      {labelLine}
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={textAnchor}
+        dominantBaseline="central"
+        fontSize="14"
+        fontWeight="bold"
+      >
+        {labelText}
+      </text>
+    </>
   );
 };
 
@@ -68,6 +130,7 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
       case "line":
         return (
           <LineChart data={data}>
+            <rect width="100%" height="100%" fill="#1f2937" />
             <XAxis
               dataKey={xKey}
               stroke="#888888"
@@ -85,7 +148,11 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
               tickFormatter={(value) => `${value}`}
             />
             <Tooltip
-              contentStyle={{ backgroundColor: "#333", border: "none" }}
+              contentStyle={{
+                backgroundColor: "#1f2937",
+                border: "none",
+                color: "white",
+              }}
             />
             <Line
               type="monotone"
@@ -108,7 +175,7 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
       case "bar":
         return (
           <BarChart data={data}>
-            <rect x="0" y="0" width="100%" height="100%" fill="#1a1a1a" />
+            <rect width="100%" height="100%" fill="#1f2937" />
             <XAxis
               dataKey={xKey}
               stroke="#888888"
@@ -125,7 +192,7 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#2a2a2a",
+                backgroundColor: "#1f2937",
                 border: "none",
                 color: "white",
               }}
@@ -142,15 +209,18 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
       case "pie":
         return (
           <PieChart>
-            <rect x="0" y="0" width="100%" height="100%" fill="#1a1a1a" />
+            <rect width="100%" height="100%" fill="#1f2937" />
             <Pie
               data={data}
               cx="50%"
               cy="50%"
               labelLine={false}
-              outerRadius={120}
+              outerRadius={150}
               fill="#8884d8"
               dataKey={yKey}
+              nameKey={xKey}
+              startAngle={90}
+              endAngle={-270}
               label={renderCustomizedLabel}
             >
               {data.map((entry, index) => (
@@ -162,7 +232,7 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: "#2a2a2a",
+                backgroundColor: "#1f2937",
                 border: "none",
                 color: "white",
               }}
@@ -175,12 +245,12 @@ export function Chart({ data, title, type, xKey, yKey, colorKey }: ChartProps) {
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-gray-800">
       <CardHeader>
         <CardTitle className="text-white">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pl-2">
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={500}>
           {renderChart()}
         </ResponsiveContainer>
       </CardContent>

@@ -24,7 +24,7 @@ function CountdownTimer() {
 
     const interval = setInterval(() => {
       const now = new Date();
-      const difference = kickoffTime - now;
+      const difference = kickoffTime.getTime() - now.getTime();
 
       if (difference > 0) {
         const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
@@ -43,13 +43,19 @@ function CountdownTimer() {
   }, []);
 
   return (
-    <div style={{
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
-      color: "white",
-      padding: "4px 12px",
-      fontSize: "20px", // フォントサイズを大きく
-      fontWeight: "bold" // 太字に設定
-    }}>
+    <div
+      style={{
+        position: "absolute",
+        top: "10px",
+        right: "10px",
+        backgroundColor: "rgba(0, 0, 0, 0.6)",
+        color: "white",
+        padding: "4px 12px",
+        borderRadius: "8px",
+        fontSize: "20px", // フォントサイズを大きく
+        fontWeight: "bold", // 太字に設定
+      }}
+    >
       <h3>{timeLeft}</h3>
     </div>
   );
@@ -136,6 +142,19 @@ export default function MapPage() {
           <div style={{ textAlign: "center", margin: "10px 0" }}>
             <CountdownTimer />
           </div>
+      {/* CountdownTimer を追加 */}
+      <CountdownTimer />
+      <main className="p-4 md:p-2 space-y-4">
+        <div className="text-center">
+          <h1 className="text-xl font-bold">町田GIONスタジアムへ！</h1>
+          <h2 className="text-lg mt-2">いざ登城！</h2>
+          <h3 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h3>
+          <h3 className="text-lg mt-2">キックオフ 14:00</h3>
+           <div style={{ textAlign: "center", margin: "10px 0" }}>
+            <CountdownTimer />
+          </div>
+        </div>
+
         </div>
 
         <CurrentLocationDisplay />
