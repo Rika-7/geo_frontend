@@ -8,14 +8,14 @@ export default function DashboardPage() {
       <div className="container mx-auto space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">
-            Soccer Game Visitor Dashboard
+            サッカー観戦者数　ダッシュボード
           </h2>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <Card className="bg-gray-800 text-white">
             <CardHeader>
               <CardTitle className="text-lg font-medium">
-                Total Visitors
+                全来場者数　（町田ゼルビア vs 川崎フロンターレ）
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -25,7 +25,7 @@ export default function DashboardPage() {
           <Card className="bg-gray-800 text-white">
             <CardHeader>
               <CardTitle className="text-lg font-medium">
-                Visitors by Group
+                サポートクラブ別の来場者数
               </CardTitle>
             </CardHeader>
             <CardContent>
