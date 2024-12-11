@@ -1,40 +1,68 @@
+// src/app/dashboard/by_station/page.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CustomBarChart from "@/components/ui/bar_charts";
+import { StackedBarChart } from "@/components/ui/stacked_bar_chart";
+
+interface StationData {
+  name: string;
+  value: number;
+  color: string;
+}
 
 export default function DashboardByStation() {
-  const stationData = [
-    { name: "町田駅", value: 5000, color: "#36A2EB" },
-    { name: "鶴川駅", value: 3000, color: "#FF6384" },
-    { name: "多摩駅", value: 2000, color: "#FFCE56" },
-    { name: "その他", value: 1050, color: "#808080" },
+  const stationData: StationData[] = [
+    { name: "町田駅", value: 6000, color: "#8B5CF6" }, // Purple
+    { name: "鶴川駅", value: 2500, color: "#EC4899" }, // Pink
+    { name: "多摩駅", value: 1500, color: "#059669" }, // Emerald green
+    { name: "その他", value: 1050, color: "#64748B" }, // Slate
   ];
 
-  const stationBySupporterData = [
-    // 町田駅
-    { name: "町田駅 - 町田ゼルビア", value: 2500, color: "#36A2EB" },
-    { name: "町田駅 - 川崎フロンターレ", value: 1000, color: "#FF6384" },
-    { name: "町田駅 - 横浜F・マリノス", value: 800, color: "#FFCE56" },
-    { name: "町田駅 - 鹿島アントラーズ", value: 400, color: "#4BC0C0" },
-    { name: "町田駅 - その他", value: 300, color: "#808080" },
-    // 鶴川駅
-    { name: "鶴川駅 - 町田ゼルビア", value: 1500, color: "#36A2EB" },
-    { name: "鶴川駅 - 川崎フロンターレ", value: 600, color: "#FF6384" },
-    { name: "鶴川駅 - 横浜F・マリノス", value: 500, color: "#FFCE56" },
-    { name: "鶴川駅 - 鹿島アントラーズ", value: 200, color: "#4BC0C0" },
-    { name: "鶴川駅 - その他", value: 200, color: "#808080" },
-    // 多摩駅
-    { name: "多摩駅 - 町田ゼルビア", value: 1000, color: "#36A2EB" },
-    { name: "多摩駅 - 川崎フロンターレ", value: 400, color: "#FF6384" },
-    { name: "多摩駅 - 横浜F・マリノス", value: 300, color: "#FFCE56" },
-    { name: "多摩駅 - 鹿島アントラーズ", value: 200, color: "#4BC0C0" },
-    { name: "多摩駅 - その他", value: 100, color: "#808080" },
-    // その他
-    { name: "その他 - 町田ゼルビア", value: 400, color: "#36A2EB" },
-    { name: "その他 - 川崎フロンターレ", value: 250, color: "#FF6384" },
-    { name: "その他 - 横浜F・マリノス", value: 200, color: "#FFCE56" },
-    { name: "その他 - 鹿島アントラーズ", value: 100, color: "#4BC0C0" },
-    { name: "その他 - その他", value: 100, color: "#808080" },
+  const stackedData = [
+    {
+      station: "町田駅",
+      町田ゼルビア: 3150,
+      川崎フロンターレ: 2150,
+      "横浜F・マリノス": 500,
+      鹿島アントラーズ: 50,
+      その他: 150,
+      total: 6000,
+    },
+    {
+      station: "鶴川駅",
+      町田ゼルビア: 1800,
+      川崎フロンターレ: 600,
+      "横浜F・マリノス": 65,
+      鹿島アントラーズ: 15,
+      その他: 20,
+      total: 2500,
+    },
+    {
+      station: "多摩駅",
+      町田ゼルビア: 1200,
+      川崎フロンターレ: 262,
+      "横浜F・マリノス": 10,
+      鹿島アントラーズ: 3,
+      その他: 25,
+      total: 1500,
+    },
+    {
+      station: "その他",
+      町田ゼルビア: 912,
+      川崎フロンターレ: 112,
+      "横浜F・マリノス": 19,
+      鹿島アントラーズ: 2,
+      その他: 5,
+      total: 1050,
+    },
   ];
+
+  const clubColors = {
+    町田ゼルビア: "#36A2EB",
+    川崎フロンターレ: "#FF6384",
+    "横浜F・マリノス": "#FFCE56",
+    鹿島アントラーズ: "#4BC0C0",
+    その他: "#808080",
+  };
 
   const totalVisitors = stationData.reduce(
     (sum, station) => sum + station.value,
@@ -89,21 +117,21 @@ export default function DashboardByStation() {
           <Card className="bg-gray-800 text-white">
             <CardHeader>
               <CardTitle className="text-lg font-medium">
-                経由駅・サポートクラブ別の来場者数
+                サポートクラブ別の来場者数
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                {[
-                  { name: "町田ゼルビア", color: "#36A2EB" },
-                  { name: "川崎フロンターレ", color: "#FF6384" },
-                  { name: "横浜F・マリノス", color: "#FFCE56" },
-                  { name: "鹿島アントラーズ", color: "#4BC0C0" },
-                  { name: "その他", color: "#808080" },
-                ].map((club) => {
-                  const clubTotal = stationBySupporterData
-                    .filter((item) => item.name.includes(club.name))
-                    .reduce((sum, item) => sum + item.value, 0);
+                {(
+                  Object.entries(clubColors) as [
+                    keyof typeof clubColors,
+                    string
+                  ][]
+                ).map(([club, color]) => {
+                  const clubTotal = stackedData.reduce(
+                    (sum, station) => sum + station[club],
+                    0
+                  );
                   const percentage = (
                     (clubTotal / totalVisitors) *
                     100
@@ -111,15 +139,15 @@ export default function DashboardByStation() {
 
                   return (
                     <li
-                      key={club.name}
+                      key={club}
                       className="flex justify-between items-center"
                     >
                       <span className="flex items-center">
                         <span
                           className="w-3 h-3 rounded-full mr-2"
-                          style={{ backgroundColor: club.color }}
+                          style={{ backgroundColor: color }}
                         ></span>
-                        {club.name}
+                        {club}
                       </span>
                       <span className="font-bold">
                         {clubTotal.toLocaleString()} ({percentage}%)
@@ -132,12 +160,10 @@ export default function DashboardByStation() {
           </Card>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-1">
+        {/* Changed from grid-cols-1 to grid-cols-2 for horizontal layout */}
+        <div className="grid gap-4 md:grid-cols-2">
           <CustomBarChart data={stationData} title="経由駅別の来場者数" />
-          <CustomBarChart
-            data={stationBySupporterData}
-            title="経由駅・サポートクラブ別の来場者数"
-          />
+          <StackedBarChart data={stackedData} clubColors={clubColors} />
         </div>
       </div>
     </div>

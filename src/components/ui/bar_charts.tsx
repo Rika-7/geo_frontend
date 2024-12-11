@@ -28,13 +28,13 @@ const CustomBarChart: React.FC<BarChartProps> = ({ data, title }) => {
           <BarChart data={data}>
             <XAxis
               dataKey="name"
-              stroke="#888888"
+              stroke="#ffffff"
               fontSize={12}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              stroke="#888888"
+              stroke="#ffffff"
               fontSize={12}
               tickLine={false}
               axisLine={false}
