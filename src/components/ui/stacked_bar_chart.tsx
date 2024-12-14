@@ -15,18 +15,14 @@ import {
 interface StackedData {
   station: string;
   町田ゼルビア: number;
-  川崎フロンターレ: number;
-  "横浜F・マリノス": number;
-  鹿島アントラーズ: number;
+  浦和レッズ: number;
   その他: number;
   total: number;
 }
 
 interface ClubColors {
   町田ゼルビア: string;
-  川崎フロンターレ: string;
-  "横浜F・マリノス": string;
-  鹿島アントラーズ: string;
+  浦和レッズ: string;
   その他: string;
 }
 

@@ -12,8 +12,8 @@ interface StationData {
 export default function DashboardByStation() {
   const stationData: StationData[] = [
     { name: "町田駅", value: 6000, color: "#8B5CF6" }, // Purple
-    { name: "鶴川駅", value: 2500, color: "#EC4899" }, // Pink
-    { name: "多摩駅", value: 1500, color: "#059669" }, // Emerald green
+    { name: "鶴川駅", value: 3000, color: "#EC4899" }, // Pink
+    { name: "多摩駅", value: 1000, color: "#059669" }, // Emerald green
     { name: "その他", value: 1050, color: "#64748B" }, // Slate
   ];
 
@@ -21,47 +21,37 @@ export default function DashboardByStation() {
     {
       station: "町田駅",
       町田ゼルビア: 3150,
-      川崎フロンターレ: 2150,
-      "横浜F・マリノス": 500,
-      鹿島アントラーズ: 50,
-      その他: 150,
+      浦和レッズ: 2150,
+      その他: 700,
       total: 6000,
     },
     {
       station: "鶴川駅",
-      町田ゼルビア: 1800,
-      川崎フロンターレ: 600,
-      "横浜F・マリノス": 65,
-      鹿島アントラーズ: 15,
-      その他: 20,
-      total: 2500,
+      町田ゼルビア: 2100,
+      浦和レッズ: 800,
+      その他: 100,
+      total: 3000,
     },
     {
       station: "多摩駅",
-      町田ゼルビア: 1200,
-      川崎フロンターレ: 262,
-      "横浜F・マリノス": 10,
-      鹿島アントラーズ: 3,
-      その他: 25,
-      total: 1500,
+      町田ゼルビア: 900,
+      浦和レッズ: 62,
+      その他: 38,
+      total: 1000,
     },
     {
       station: "その他",
       町田ゼルビア: 912,
-      川崎フロンターレ: 112,
-      "横浜F・マリノス": 19,
-      鹿島アントラーズ: 2,
-      その他: 5,
+      浦和レッズ: 112,
+      その他: 26,
       total: 1050,
     },
   ];
 
   const clubColors = {
     町田ゼルビア: "#36A2EB",
-    川崎フロンターレ: "#FF6384",
-    "横浜F・マリノス": "#FFCE56",
-    鹿島アントラーズ: "#4BC0C0",
-    その他: "#808080",
+    浦和レッズ: "#FF6384",
+    その他: "#FFCE56",
   };
 
   const totalVisitors = stationData.reduce(
