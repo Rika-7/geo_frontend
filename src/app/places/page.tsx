@@ -37,8 +37,8 @@ interface Place {
   latitude: number;
   longitude: number;
   url: string;
+  has_coupon: boolean;
 }
-
 interface CategoryButton {
   category: PlaceCategory;
   label: string;
@@ -56,17 +56,10 @@ const Places = (): ReactElement => {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] =
     useState<PlaceCategory | null>(null);
-  const [isMapMounted, setIsMapMounted] = useState<boolean>(false);
   const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
+  const [key, setKey] = useState<number>(0);
   const listRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
-
-  useEffect(() => {
-    setIsMapMounted(true);
-    return () => {
-      setIsMapMounted(false);
-    };
-  }, []);
 
   useEffect(() => {
     const fetchPlaces = async (): Promise<void> => {
@@ -119,6 +112,7 @@ const Places = (): ReactElement => {
   const handleCategoryClick = (category: PlaceCategory): void => {
     setSelectedCategory(selectedCategory === category ? null : category);
     setSelectedPlaceId(null);
+    setKey((prev) => prev + 1); // Force map remount when changing category
   };
 
   const scrollToPlace = useCallback((placeId: number): void => {
@@ -206,17 +200,32 @@ const Places = (): ReactElement => {
             >
               {place.placename}
             </h3>
-            {place.url && (
-              <a
-                href={place.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-800"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            )}
+            <div className="flex items-center gap-2">
+              {place.has_coupon && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    alert("当日観戦者限定！　500円割引！");
+                  }}
+                >
+                  クーポンはこちら！
+                </Button>
+              )}
+              {place.url && (
+                <a
+                  href={place.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
+            </div>
           </div>
           <p
             className={`text-xs mt-1 ${
@@ -268,10 +277,11 @@ const Places = (): ReactElement => {
               Error loading map data: {error}
             </p>
           )}
-          {!loading && !error && places.length > 0 && isMapMounted && (
+          {!loading && !error && places.length > 0 && (
             <>
               <div className="absolute inset-0 rounded-lg overflow-hidden border">
                 <MapComponent
+                  key={key}
                   places={filteredPlaces}
                   showSearch={false}
                   showLegend={false}

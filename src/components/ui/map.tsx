@@ -33,6 +33,7 @@ interface Place {
   latitude: number;
   longitude: number;
   url: string;
+  has_coupon: boolean;
 }
 
 interface LocationData {
@@ -212,7 +213,6 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
   const handleClick = () => {
     if (onMarkerClick) {
       onMarkerClick(place.place_id);
-      // Center the map on the clicked marker with a slight offset for better visibility
       map.setView(
         [place.latitude + 0.0005, place.longitude],
         map.getZoom() || 13,
@@ -222,6 +222,11 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
         }
       );
     }
+  };
+
+  const handleCouponClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    alert("当日観戦者限定！　500円割引！");
   };
 
   return (
@@ -240,16 +245,39 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
         {place.placename}
       </Tooltip>
       <Popup>
-        <a
-          href={place.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
-        >
-          <strong>{place.placename}</strong>
-        </a>
-        <p className="mt-2">{place.description}</p>
-        <p className="mt-1 italic">Category: {place.category}</p>
+        <div className="min-w-[200px]">
+          <a
+            href={place.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            <strong>{place.placename}</strong>
+          </a>
+          <p className="mt-2 text-sm">{place.description}</p>
+          <div className="mt-3 flex items-center gap-2">
+            {place.has_coupon && (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800"
+                onClick={handleCouponClick}
+              >
+                クーポン
+              </Button>
+            )}
+            {place.url && (
+              <a
+                href={place.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 text-xs"
+              >
+                詳細を見る
+              </a>
+            )}
+          </div>
+        </div>
       </Popup>
     </Marker>
   );
