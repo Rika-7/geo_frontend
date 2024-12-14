@@ -16,13 +16,14 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="text-lg font-medium">
                 全来場者数
-                <br /> 　町田ゼルビア vs 川崎フロンターレ
+                <br /> 　町田ゼルビア vs 浦和レッズ
                 <br />
                 　町田GIONスタジアム
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-4xl font-bold">{totalVisitors}</div>
+              <div className="text-4xl font-bold">{totalVisitors}人</div>
+              <div className="text-lg font-medium">満員まで3950人</div>
             </CardContent>
           </Card>
           <Card className="bg-gray-800 text-white">
