@@ -30,8 +30,8 @@ export const visitorData = [
 // Visitor data by group with associated colors
 export const visitorsByGroup = [
   { group: "町田ゼルビアサポーター", visitors: 7062, color: "#36A2EB" },
-  { group: "浦和レッズサポーター", visitors: 3124, color: "#FF6384" },
-  { group: "その他", visitors: 864, color: "#FFCE56" },
+  { group: "浦和レッズサポーター", visitors: 3760, color: "#FF6384" },
+  { group: "その他", visitors: 228, color: "#FFCE56" },
 ];
 
 // Calculate total visitors across all groups
