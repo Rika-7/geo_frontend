@@ -47,7 +47,7 @@ const stadiumCoupons: Coupon[] = [
 const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
   <div className="flex flex-col space-y-1">
     <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition-colors">
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1">
         <span className="text-gray-800 font-medium">{coupon.name}</span>
         <div className="flex items-center gap-2 mt-1">
           <Link
@@ -58,13 +58,13 @@ const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
           </Link>
         </div>
       </div>
-      <Link href={coupon.couponUrl}>
+      <Link href={coupon.couponUrl} className="flex-shrink-0">
         <Image
           src={coupon.imageUrl}
           alt={coupon.name}
           width={80}
           height={80}
-          className="rounded ml-4"
+          className="rounded w-20 h-20 object-cover"
         />
       </Link>
     </div>
@@ -74,7 +74,7 @@ const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
 const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
   <div className="flex flex-col space-y-1">
     <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition-colors">
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1">
         <Link
           href={place.url}
           className="text-gray-800 font-medium hover:text-blue-600"
@@ -97,13 +97,13 @@ const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
           </Link>
         </div>
       </div>
-      <Link href={place.coupon_url}>
+      <Link href={place.coupon_url} className="flex-shrink-0">
         <Image
           src={place.image_url}
           alt={place.placename}
           width={80}
           height={80}
-          className="rounded ml-4"
+          className="rounded w-20 h-20 object-cover"
         />
       </Link>
     </div>
