@@ -207,6 +207,15 @@ const MapPage: React.FC = () => {
               </>
             }
           />
+          <MenuButton
+            href="/coupon"
+            label={
+              <>
+                <span>クー</span>
+                <span>ポン</span>
+              </>
+            }
+          />
         </div>
       </main>
     </div>
