@@ -2,8 +2,8 @@ import React from "react";
 
 export const visitorsByGroup = [
   { group: "町田ゼルビアサポーター", visitors: 7062, color: "#36A2EB" },
-  { group: "浦和レッズ", visitors: 3124, color: "#FF6384" },
-  { group: "その他", visitors: 200, color: "#808080" },
+  { group: "浦和レッズ", visitors: 3769, color: "#FF6384" },
+  { group: "その他", visitors: 228, color: "#808080" },
 ];
 
 const VisitorLegend = () => {

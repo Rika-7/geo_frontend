@@ -38,6 +38,8 @@ interface Place {
   longitude: number;
   url: string;
   has_coupon: boolean;
+  image_url?: string;
+  coupon_url?: string;
 }
 interface CategoryButton {
   category: PlaceCategory;
@@ -201,18 +203,16 @@ const Places = (): ReactElement => {
               {place.placename}
             </h3>
             <div className="flex items-center gap-2">
-              {place.has_coupon && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    alert("当日観戦者限定！　500円割引！");
-                  }}
+              {place.has_coupon && place.coupon_url && (
+                <a
+                  href={place.coupon_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded"
+                  onClick={(e) => e.stopPropagation()}
                 >
                   クーポンはこちら！
-                </Button>
+                </a>
               )}
               {place.url && (
                 <a
