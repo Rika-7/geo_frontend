@@ -58,13 +58,14 @@ const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
           </Link>
         </div>
       </div>
-      <Link href={coupon.couponUrl} className="flex-shrink-0">
+      <Link href={coupon.couponUrl} className="flex-shrink-0 ml-4">
         <Image
           src={coupon.imageUrl}
           alt={coupon.name}
           width={80}
           height={80}
-          className="rounded w-20 h-20 object-cover"
+          className="rounded object-contain h-20"
+          style={{ width: "auto" }}
         />
       </Link>
     </div>
@@ -97,13 +98,14 @@ const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
           </Link>
         </div>
       </div>
-      <Link href={place.coupon_url} className="flex-shrink-0">
+      <Link href={place.coupon_url} className="flex-shrink-0 ml-4">
         <Image
           src={place.image_url}
           alt={place.placename}
           width={80}
           height={80}
-          className="rounded w-20 h-20 object-cover"
+          className="rounded object-contain h-20"
+          style={{ width: "auto" }}
         />
       </Link>
     </div>
