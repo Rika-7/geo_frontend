@@ -64,7 +64,7 @@ const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
           alt={coupon.name}
           width={80}
           height={80}
-          className="rounded object-contain h-20"
+          className="rounded object-contain h-20 md:h-20 h-16"
           style={{ width: "auto" }}
         />
       </Link>
@@ -104,7 +104,7 @@ const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
           alt={place.placename}
           width={80}
           height={80}
-          className="rounded object-contain h-20"
+          className="rounded object-contain h-20 md:h-20 h-16"
           style={{ width: "auto" }}
         />
       </Link>
@@ -156,7 +156,7 @@ const Coupon = () => {
     <div className="container mx-auto px-4">
       <h1 className="text-2xl text-center font-bold mt-4 mb-6">クーポン</h1>
 
-      <div className="space-y-6 mb-6">
+      <div className="space-y-3 md:space-y-6 mb-6">
         <Card>
           <CardHeader>
             <CardTitle className="font-bold">スタジアムクーポン</CardTitle>
