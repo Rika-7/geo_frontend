@@ -41,6 +41,15 @@ const Traffic = () => {
           }
           isActive={true}
         />
+        <MenuButton
+          href="/coupon"
+          label={
+            <>
+              <span>クー</span>
+              <span>ポン</span>
+            </>
+          }
+        />
       </div>
     </div>
   );

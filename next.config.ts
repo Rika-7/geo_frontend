@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
   // Allow importing CSS from node_modules
   transpilePackages: ["react-leaflet", "leaflet"],
 
+  // Add images configuration for Azure blob storage
+  images: {
+    domains: ["tech0gen7tokino.blob.core.windows.net"],
+  },
+
   experimental: {
     // Configure Turbopack options properly
     serverActions: {

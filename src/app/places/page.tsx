@@ -330,6 +330,15 @@ const Places = (): ReactElement => {
             </>
           }
         />
+        <MenuButton
+          href="/coupon"
+          label={
+            <>
+              <span>クー</span>
+              <span>ポン</span>
+            </>
+          }
+        />
       </div>
     </div>
   );
