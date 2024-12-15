@@ -28,7 +28,7 @@ interface Place {
 const stadiumCoupons: Coupon[] = [
   {
     id: 1,
-    name: "ビール半額！",
+    name: "ビール2杯目半額！",
     imageUrl:
       "https://tech0gen7tokino.blob.core.windows.net/coupon/beer_stadium_1.png",
     couponUrl:
@@ -36,7 +36,7 @@ const stadiumCoupons: Coupon[] = [
   },
   {
     id: 2,
-    name: "ソフトドリンク無料！",
+    name: "フード購入でソフトドリンク無料！",
     imageUrl:
       "https://tech0gen7tokino.blob.core.windows.net/coupon/soft_drink_stadium_1.png",
     couponUrl:
@@ -45,20 +45,30 @@ const stadiumCoupons: Coupon[] = [
 ];
 
 const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
-  <Link href={coupon.couponUrl} className="block">
+  <div className="flex flex-col space-y-1">
     <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition-colors">
       <div className="flex flex-col">
-        <span className="text-gray-800">{coupon.name}</span>
+        <span className="text-gray-800 font-medium">{coupon.name}</span>
+        <div className="flex items-center gap-2 mt-1">
+          <Link
+            href={coupon.couponUrl}
+            className="text-blue-500 text-sm hover:text-blue-600 bg-blue-50 px-3 py-1 rounded-md transition-colors"
+          >
+            クーポンを表示
+          </Link>
+        </div>
       </div>
-      <Image
-        src={coupon.imageUrl}
-        alt={coupon.name}
-        width={80}
-        height={80}
-        className="rounded ml-4"
-      />
+      <Link href={coupon.couponUrl}>
+        <Image
+          src={coupon.imageUrl}
+          alt={coupon.name}
+          width={80}
+          height={80}
+          className="rounded ml-4"
+        />
+      </Link>
     </div>
-  </Link>
+  </div>
 );
 
 const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
@@ -87,13 +97,15 @@ const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
           </Link>
         </div>
       </div>
-      <Image
-        src={place.image_url}
-        alt={place.placename}
-        width={80}
-        height={80}
-        className="rounded ml-4"
-      />
+      <Link href={place.coupon_url}>
+        <Image
+          src={place.image_url}
+          alt={place.placename}
+          width={80}
+          height={80}
+          className="rounded ml-4"
+        />
+      </Link>
     </div>
   </div>
 );
@@ -145,7 +157,7 @@ const Coupon = () => {
       <div className="space-y-6 mb-6">
         <Card>
           <CardHeader>
-            <CardTitle>スタジアムクーポン</CardTitle>
+            <CardTitle className="font-bold">スタジアムクーポン</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col space-y-2">
             {stadiumCoupons.map((coupon) => (
@@ -156,7 +168,7 @@ const Coupon = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>グルメクーポン</CardTitle>
+            <CardTitle className="font-bold">グルメクーポン</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col space-y-2">
             {isLoading ? (
