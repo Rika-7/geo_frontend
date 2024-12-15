@@ -150,7 +150,7 @@ const MapPage: React.FC = () => {
           <h1 className="text-xl font-bold">
             町田GIONスタジアムへ！ いざ登城！
           </h1>
-          <h2 className="text-lg mt-2">町田ゼルビア vs 川崎フロンターレ</h2>
+          <h2 className="text-lg mt-2">町田ゼルビア vs 浦和レッズ</h2>
           <h2 className="text-lg mt-2">キックオフ 14:00</h2>
           <div className="flex justify-center mt-4">
             <CountdownTimer />

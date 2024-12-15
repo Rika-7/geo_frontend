@@ -34,6 +34,7 @@ interface Place {
   longitude: number;
   url: string;
   has_coupon: boolean;
+  coupon_url?: string;
 }
 
 interface LocationData {
@@ -224,11 +225,6 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
     }
   };
 
-  const handleCouponClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    alert("当日観戦者限定！　500円割引！");
-  };
-
   return (
     <Marker
       position={[place.latitude, place.longitude]}
@@ -256,15 +252,15 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
           </a>
           <p className="mt-2 text-sm">{place.description}</p>
           <div className="mt-3 flex items-center gap-2">
-            {place.has_coupon && (
-              <Button
-                variant="secondary"
-                size="sm"
-                className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800"
-                onClick={handleCouponClick}
+            {place.has_coupon && place.coupon_url && (
+              <a
+                href={place.coupon_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded"
               >
-                クーポン
-              </Button>
+                クーポンを表示
+              </a>
             )}
             {place.url && (
               <a
