@@ -66,6 +66,26 @@ const Places = (): ReactElement => {
   const [key, setKey] = useState<number>(0);
   const listRefs = useRef<{ [key: number]: HTMLDivElement | null }>({});
 
+  const getCategoryButtonClass = (category: PlaceCategory) => {
+    const baseClasses =
+      "text-xs px-3 transition-all duration-200 hover:font-bold";
+
+    if (selectedCategory === category) {
+      return baseClasses;
+    }
+
+    switch (category) {
+      case PlaceCategory.Eatery:
+        return `${baseClasses} hover:bg-orange-200`;
+      case PlaceCategory.Sightseeing:
+        return `${baseClasses} hover:bg-green-200`;
+      case PlaceCategory.CulturalAttraction:
+        return `${baseClasses} hover:bg-purple-200`;
+      default:
+        return baseClasses;
+    }
+  };
+
   useEffect(() => {
     const fetchPlaces = async (): Promise<void> => {
       try {
@@ -157,12 +177,12 @@ const Places = (): ReactElement => {
     <div className="bg-white p-2 rounded-md shadow-md text-sm">
       <div className="grid grid-cols-4 gap-2">
         <div className="flex items-center">
-          <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
-          <span className="text-gray-800">レジャー</span>
-        </div>
-        <div className="flex items-center">
           <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
           <span className="text-gray-800">グルメ</span>
+        </div>
+        <div className="flex items-center">
+          <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
+          <span className="text-gray-800">レジャー</span>
         </div>
         <div className="flex items-center">
           <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
@@ -277,7 +297,7 @@ const Places = (): ReactElement => {
               key={btn.category}
               variant={selectedCategory === btn.category ? "default" : "ghost"}
               size="sm"
-              className="text-xs px-3"
+              className={getCategoryButtonClass(btn.category)}
               onClick={() => handleCategoryClick(btn.category)}
             >
               {btn.label}
