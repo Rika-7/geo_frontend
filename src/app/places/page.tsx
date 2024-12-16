@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import React, {
   useEffect,
   useState,
@@ -39,8 +40,10 @@ interface Place {
   url: string;
   has_coupon: boolean;
   image_url?: string;
+  cover_image_url?: string;
   coupon_url?: string;
 }
+
 interface CategoryButton {
   category: PlaceCategory;
   label: string;
@@ -72,12 +75,14 @@ const Places = (): ReactElement => {
           );
         }
 
-        const apiUrl: string = `${process.env.NEXT_PUBLIC_API_URL}/places`;
-        const response = await fetch(apiUrl, {
-          headers: {
-            Accept: "application/json",
-          },
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/places`,
+          {
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
 
         if (!response.ok) {
           const errorText = await response.text();
@@ -94,9 +99,7 @@ const Places = (): ReactElement => {
         console.error("Error fetching places:", err);
         setError(
           err instanceof Error
-            ? `Error: ${err.message}. API URL: ${
-                process.env.NEXT_PUBLIC_API_URL || "not set"
-              }`
+            ? `Error: ${err.message}`
             : "Failed to fetch places. Please try again later."
         );
       } finally {
@@ -114,7 +117,7 @@ const Places = (): ReactElement => {
   const handleCategoryClick = (category: PlaceCategory): void => {
     setSelectedCategory(selectedCategory === category ? null : category);
     setSelectedPlaceId(null);
-    setKey((prev) => prev + 1); // Force map remount when changing category
+    setKey((prev) => prev + 1);
   };
 
   const scrollToPlace = useCallback((placeId: number): void => {
@@ -122,7 +125,6 @@ const Places = (): ReactElement => {
     const container = listContainerRef.current;
 
     if (element && container) {
-      // Calculate the scroll position to center the element
       const containerHeight = container.clientHeight;
       const elementHeight = element.clientHeight;
       const scrollTop =
@@ -138,7 +140,7 @@ const Places = (): ReactElement => {
   const handleMarkerClick = useCallback(
     (placeId: number) => {
       setSelectedPlaceId(placeId);
-      scrollToPlace(placeId); // Add scrolling when clicking marker
+      scrollToPlace(placeId);
     },
     [scrollToPlace]
   );
@@ -192,50 +194,65 @@ const Places = (): ReactElement => {
           }`}
           onClick={() => handleListItemClick(place.place_id)}
         >
-          <div className="flex justify-between items-start">
-            <h3
-              className={`text-sm font-medium ${
-                selectedPlaceId === place.place_id
-                  ? "text-blue-900"
-                  : "text-gray-900"
-              }`}
-            >
-              {place.placename}
-            </h3>
-            <div className="flex items-center gap-2">
-              {place.has_coupon && place.coupon_url && (
-                <a
-                  href={place.coupon_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded"
-                  onClick={(e) => e.stopPropagation()}
+          <div className="flex gap-3">
+            {place.cover_image_url && (
+              <div className="relative flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden">
+                <Image
+                  src={place.cover_image_url}
+                  alt={place.placename}
+                  fill
+                  unoptimized
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            )}
+            <div className="flex-grow">
+              <div className="flex justify-between items-start">
+                <h3
+                  className={`text-sm font-medium ${
+                    selectedPlaceId === place.place_id
+                      ? "text-blue-900"
+                      : "text-gray-900"
+                  }`}
                 >
-                  クーポンはこちら！
-                </a>
-              )}
-              {place.url && (
-                <a
-                  href={place.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
+                  {place.placename}
+                </h3>
+                <div className="flex items-center gap-2">
+                  {place.has_coupon && place.coupon_url && (
+                    <a
+                      href={place.coupon_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs px-2 py-1 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      クーポンはこちら！
+                    </a>
+                  )}
+                  {place.url && (
+                    <a
+                      href={place.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+              </div>
+              <p
+                className={`text-xs mt-1 ${
+                  selectedPlaceId === place.place_id
+                    ? "text-blue-800"
+                    : "text-gray-600"
+                }`}
+              >
+                {place.description}
+              </p>
             </div>
           </div>
-          <p
-            className={`text-xs mt-1 ${
-              selectedPlaceId === place.place_id
-                ? "text-blue-800"
-                : "text-gray-600"
-            }`}
-          >
-            {place.description}
-          </p>
         </div>
       ))}
       {filteredPlaces.length === 0 && (
