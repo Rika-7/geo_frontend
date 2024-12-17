@@ -48,7 +48,7 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-center space-x-4 max-w-md mx-auto">
+        <div className="flex justify-center space-x-2 sm:space-x-4 max-w-md mx-auto">
           <MenuButton href="/home" label="ホーム" isActive={true} />
           <MenuButton
             href="/map"
