@@ -64,51 +64,44 @@ interface MapProps {
   } | null;
 }
 
-type CategoryIcons = {
-  [key in "sightseeing" | "eatery" | "cultural_attraction" | "shop"]: L.Icon;
-};
+const getMarkerIcon = (category: string): L.Icon => {
+  // Map the PlaceCategory enum values to their Japanese display names
+  let color;
+  switch (category) {
+    case "sightseeing":
+      color = "#22c55e"; // bg-green-500 for レジャー
+      break;
+    case "eatery":
+      color = "#f97316"; // bg-orange-500 for グルメ
+      break;
+    case "cultural_attraction":
+      color = "#8b5cf6"; // bg-violet-500 for 史跡名所
+      break;
+    case "shop":
+      color = "#3b82f6"; // bg-blue-500 for お店
+      break;
+    default:
+      color = "#6b7280"; // bg-gray-500
+  }
 
-const categoryIcons: CategoryIcons = {
-  sightseeing: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
+  const svgIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">
+      <path fill="${color}" d="M12.5 0C5.596 0 0 5.596 0 12.5c0 10.937 12.5 28.5 12.5 28.5s12.5-17.563 12.5-28.5C25 5.596 19.404 0 12.5 0zm0 17.5c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5-2.239 5-5 5z"/>
+    </svg>
+  `;
+
+  const blob = new Blob([svgIcon], { type: "image/svg+xml" });
+  const url = URL.createObjectURL(blob);
+
+  return L.icon({
+    iconUrl: url,
     shadowUrl:
       "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     shadowSize: [41, 41],
-  }),
-  eatery: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-  cultural_attraction: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
-  shop: L.icon({
-    iconUrl:
-      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-    shadowUrl:
-      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-  }),
+  });
 };
 
 const getSupporterIcon = (favorite_club: string): L.Icon => {
@@ -141,11 +134,6 @@ const getSupporterIcon = (favorite_club: string): L.Icon => {
   });
 };
 
-const getMarkerIcon = (category: string): L.Icon => {
-  const normalizedCategory = category.toLowerCase() as keyof CategoryIcons;
-  return categoryIcons[normalizedCategory] || categoryIcons.sightseeing;
-};
-
 const MapControls: FC = () => {
   const map = useMap();
 
@@ -164,7 +152,7 @@ const MapControls: FC = () => {
   };
 
   return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-[1000]">
+    <div className="absolute bottom-4 right-4 z-[1000] bg-white p-0 rounded-md shadow-md text-sm">
       <Button
         variant="secondary"
         size="sm"
@@ -280,7 +268,7 @@ const MarkerWrapper: FC<MarkerWrapperProps> = ({
 };
 
 const Legend: FC = () => (
-  <div className="absolute bottom-20 right-4 z-[1000] bg-white p-2 rounded-md shadow-md text-sm">
+  <div className="absolute bottom-10 right-4 z-[1000] bg-white p-1 rounded-md shadow-md text-sm">
     <div className="grid grid-cols-2 gap-2">
       <div className="flex items-center">
         <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
