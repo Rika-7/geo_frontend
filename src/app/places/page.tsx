@@ -68,7 +68,7 @@ const Places = (): ReactElement => {
 
   const getCategoryButtonClass = (category: PlaceCategory) => {
     const baseClasses =
-      "text-sm px-4 transition-all duration-200 hover:font-bold"; // Increased font size and padding
+      "text-sm px-4 transition-all duration-200 hover:font-bold";
 
     if (selectedCategory === category) {
       return baseClasses;
@@ -175,14 +175,10 @@ const Places = (): ReactElement => {
 
   const MapLegend = () => (
     <div className="bg-white p-2 rounded-md shadow-md">
-      <div className="grid grid-cols-4 gap-1">
-        {" "}
-        {/* Reduced gap */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1">
         <div className="flex items-center">
-          <span className="inline-block w-3 h-3 mr-1 bg-orange-500 rounded-full"></span>{" "}
-          {/* Smaller icon */}
-          <span className="text-gray-800 text-[10px]">グルメ</span>{" "}
-          {/* Smaller text */}
+          <span className="inline-block w-3 h-3 mr-1 bg-orange-500 rounded-full"></span>
+          <span className="text-gray-800 text-[10px]">グルメ</span>
         </div>
         <div className="flex items-center">
           <span className="inline-block w-3 h-3 mr-1 bg-green-500 rounded-full"></span>
@@ -295,20 +291,22 @@ const Places = (): ReactElement => {
         </h1>
       </header>
       <div className="flex justify-center pb-2">
-        <div className="w-1/2 max-w-md flex justify-between space-x-4">
-          {" "}
-          {/* Added space-x-4 for button spacing */}
-          {categoryButtons.map((btn) => (
-            <Button
-              key={btn.category}
-              variant={selectedCategory === btn.category ? "default" : "ghost"}
-              size="sm"
-              className={getCategoryButtonClass(btn.category)}
-              onClick={() => handleCategoryClick(btn.category)}
-            >
-              {btn.label}
-            </Button>
-          ))}
+        <div className="w-full px-4 sm:w-1/2 sm:max-w-md">
+          <div className="flex justify-between">
+            {categoryButtons.map((btn) => (
+              <Button
+                key={btn.category}
+                variant={
+                  selectedCategory === btn.category ? "default" : "ghost"
+                }
+                size="sm"
+                className={getCategoryButtonClass(btn.category)}
+                onClick={() => handleCategoryClick(btn.category)}
+              >
+                {btn.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -333,8 +331,11 @@ const Places = (): ReactElement => {
                   selectedPlaceId={selectedPlaceId}
                 />
               </div>
-              <div className="absolute bottom-4 right-4 z-[1000]">
+              <div className="absolute bottom-16 right-4 z-[999]">
                 <MapLegend />
+              </div>
+              <div className="absolute bottom-2 right-4 z-[998]">
+                {/* Map controls will be positioned here */}
               </div>
             </>
           )}
