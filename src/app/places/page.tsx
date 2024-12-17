@@ -68,7 +68,7 @@ const Places = (): ReactElement => {
 
   const getCategoryButtonClass = (category: PlaceCategory) => {
     const baseClasses =
-      "text-xs px-3 transition-all duration-200 hover:font-bold";
+      "text-sm px-4 transition-all duration-200 hover:font-bold"; // Increased font size and padding
 
     if (selectedCategory === category) {
       return baseClasses;
@@ -174,23 +174,27 @@ const Places = (): ReactElement => {
   );
 
   const MapLegend = () => (
-    <div className="bg-white p-2 rounded-md shadow-md text-sm">
-      <div className="grid grid-cols-4 gap-2">
+    <div className="bg-white p-2 rounded-md shadow-md">
+      <div className="grid grid-cols-4 gap-1">
+        {" "}
+        {/* Reduced gap */}
         <div className="flex items-center">
-          <span className="inline-block w-4 h-4 mr-2 bg-orange-500 rounded-full"></span>
-          <span className="text-gray-800">グルメ</span>
+          <span className="inline-block w-3 h-3 mr-1 bg-orange-500 rounded-full"></span>{" "}
+          {/* Smaller icon */}
+          <span className="text-gray-800 text-[10px]">グルメ</span>{" "}
+          {/* Smaller text */}
         </div>
         <div className="flex items-center">
-          <span className="inline-block w-4 h-4 mr-2 bg-green-500 rounded-full"></span>
-          <span className="text-gray-800">レジャー</span>
+          <span className="inline-block w-3 h-3 mr-1 bg-green-500 rounded-full"></span>
+          <span className="text-gray-800 text-[10px]">レジャー</span>
         </div>
         <div className="flex items-center">
-          <span className="inline-block w-4 h-4 mr-2 bg-violet-500 rounded-full"></span>
-          <span className="text-gray-800">史跡名所</span>
+          <span className="inline-block w-3 h-3 mr-1 bg-violet-500 rounded-full"></span>
+          <span className="text-gray-800 text-[10px]">史跡名所</span>
         </div>
         <div className="flex items-center">
-          <span className="inline-block w-4 h-4 mr-2 bg-blue-500 rounded-full"></span>
-          <span className="text-gray-800">お店</span>
+          <span className="inline-block w-3 h-3 mr-1 bg-blue-500 rounded-full"></span>
+          <span className="text-gray-800 text-[10px]">お店</span>
         </div>
       </div>
     </div>
@@ -291,7 +295,9 @@ const Places = (): ReactElement => {
         </h1>
       </header>
       <div className="flex justify-center pb-2">
-        <div className="w-1/2 max-w-md flex justify-between">
+        <div className="w-1/2 max-w-md flex justify-between space-x-4">
+          {" "}
+          {/* Added space-x-4 for button spacing */}
           {categoryButtons.map((btn) => (
             <Button
               key={btn.category}
