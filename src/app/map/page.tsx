@@ -145,14 +145,14 @@ const MapPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      <main className="p-4 md:p-2 space-y-4">
-        <div className="text-center">
+      <main className="p-4 md:p-2 space-y-1">
+        <div className="text-center space-y-0.5">
           <h1 className="text-xl font-bold">
             町田GIONスタジアムへ！ いざ登城！
           </h1>
-          <h2 className="text-lg mt-2">町田ゼルビア vs 浦和レッズ</h2>
-          <h2 className="text-lg mt-2">キックオフ 14:00</h2>
-          <div className="flex justify-center mt-4">
+          <h2 className="text-lg">町田ゼルビア vs 浦和レッズ</h2>
+          <h2 className="text-lg">キックオフ 14:00</h2>
+          <div className="flex justify-center mt-1">
             <CountdownTimer />
           </div>
         </div>
