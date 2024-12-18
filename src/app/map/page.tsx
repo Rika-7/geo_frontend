@@ -36,7 +36,7 @@ const CountdownTimer: React.FC = () => {
 
   useEffect(() => {
     // Set target date to December 19th 9:00
-    const kickoffTime = new Date(2024, 11, 19, 9, 0, 0); // Note: month is 0-based, so 11 = December
+    const kickoffTime = new Date(2024, 11, 19, 7, 0, 0); // Note: month is 0-based, so 11 = December
 
     const interval = setInterval(() => {
       const now = new Date();
