@@ -2,7 +2,19 @@ import { useState, useEffect } from "react";
 import { MapPin, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const CurrentLocationDisplay = () => {
+interface CurrentLocationDisplayProps {
+  onLocationUpdate: (
+    location: {
+      latitude: number;
+      longitude: number;
+      accuracy: number;
+    } | null
+  ) => void;
+}
+
+const CurrentLocationDisplay: React.FC<CurrentLocationDisplayProps> = ({
+  onLocationUpdate,
+}) => {
   const [location, setLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -31,16 +43,19 @@ const CurrentLocationDisplay = () => {
 
     const id = navigator.geolocation.watchPosition(
       (position) => {
-        setLocation({
+        const newLocation = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy,
-        });
+        };
+        setLocation(newLocation);
+        onLocationUpdate(newLocation);
         setError("");
       },
       (error) => {
         setError(getLocationErrorMessage(error));
         setIsTracking(false);
+        onLocationUpdate(null);
       },
       {
         enableHighAccuracy: true,
@@ -58,6 +73,7 @@ const CurrentLocationDisplay = () => {
       setWatchId(null);
     }
     setIsTracking(false);
+    onLocationUpdate(null);
   };
 
   const getLocationErrorMessage = (error: GeolocationPositionError) => {

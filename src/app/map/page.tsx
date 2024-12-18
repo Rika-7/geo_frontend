@@ -24,14 +24,19 @@ interface MapProps {
   showControls: boolean;
   showSearch: boolean;
   onError: () => void;
+  currentLocation?: {
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  } | null;
 }
 
 const CountdownTimer: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState<string>("");
 
   useEffect(() => {
-    const kickoffTime = new Date();
-    kickoffTime.setHours(24, 0, 0, 0);
+    // Set target date to December 19th 9:00
+    const kickoffTime = new Date(2024, 11, 19, 9, 0, 0); // Note: month is 0-based, so 11 = December
 
     const interval = setInterval(() => {
       const now = new Date();
@@ -45,7 +50,7 @@ const CountdownTimer: React.FC = () => {
           `⚽ ${hours > 0 ? hours + "時間 " : ""}${minutes}分 ${seconds}秒`
         );
       } else {
-        setTimeLeft("⚽");
+        setTimeLeft("⚽ キックオフ！");
         clearInterval(interval);
       }
     }, 1000);
@@ -92,6 +97,11 @@ const MapPage: React.FC = () => {
   const [locationData, setLocationData] = useState<LocationData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+    accuracy: number;
+  } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -117,6 +127,16 @@ const MapPage: React.FC = () => {
 
   const handleMapError = (): void => {
     setMapKey(Date.now().toString());
+  };
+
+  const handleLocationUpdate = (
+    location: {
+      latitude: number;
+      longitude: number;
+      accuracy: number;
+    } | null
+  ) => {
+    setCurrentLocation(location);
   };
 
   if (!mounted || loading) {
@@ -157,7 +177,7 @@ const MapPage: React.FC = () => {
           </div>
         </div>
 
-        <CurrentLocationDisplay />
+        <CurrentLocationDisplay onLocationUpdate={handleLocationUpdate} />
 
         <div className="h-[400px] w-full rounded-lg overflow-hidden border text-gray-800">
           <Map
@@ -170,6 +190,7 @@ const MapPage: React.FC = () => {
             showControls={true}
             showSearch={false}
             onError={handleMapError}
+            currentLocation={currentLocation}
           />
         </div>
 
