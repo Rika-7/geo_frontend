@@ -290,7 +290,8 @@ const Places = (): ReactElement => {
           町田GIONスタジアム周辺情報
         </h1>
       </header>
-      <div className="flex justify-center pb-2">
+      {/* Reduced padding-bottom from pb-2 to pb-1 */}
+      <div className="flex justify-center pb-1">
         <div className="w-full px-4 sm:w-1/2 sm:max-w-md">
           <div className="flex justify-between">
             {categoryButtons.map((btn) => (
@@ -310,8 +311,10 @@ const Places = (): ReactElement => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center pt-0 pb-2 space-y-2">
-        <div className="relative h-[400px] w-full">
+      {/* Changed pt-0 pb-2 to pt-0 pb-1 and reduced space-y-2 to space-y-1 */}
+      <div className="flex flex-col items-center pt-0 pb-1 space-y-1">
+        <div className="relative h-[320px] w-full">
+          {/* Map component content remains the same */}
           {loading && <p className="text-center py-4">Loading map data...</p>}
           {error && (
             <p className="text-center py-4 text-red-500">
@@ -341,10 +344,12 @@ const Places = (): ReactElement => {
           )}
         </div>
       </div>
-      <div className="bg-gray-100 rounded-lg pb-2 shadow relative h-64 flex flex-col">
+      {/* Changed pb-2 to pb-1 */}
+      <div className="bg-gray-100 rounded-lg pb-1 shadow relative h-64 flex flex-col">
         <PlacesList />
       </div>
       <div className="flex justify-center space-x-2 max-w-md mx-auto mt-4">
+        {/* Menu buttons remain the same */}
         <MenuButton href="/home" label="ホーム" />
         <MenuButton
           href="/map"
