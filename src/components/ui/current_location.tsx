@@ -74,12 +74,12 @@ const CurrentLocationDisplay = () => {
   };
 
   return (
-    <div className="w-full p-4 space-y-4">
+    <div className="w-full space-y-2">
       <div className="flex justify-between items-center">
         <Button
           onClick={isTracking ? stopTracking : startTracking}
           variant={isTracking ? "destructive" : "default"}
-          className="w-full"
+          className="w-full rounded-lg"
         >
           {isTracking ? (
             <>
