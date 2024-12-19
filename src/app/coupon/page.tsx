@@ -1,29 +1,16 @@
+//
+
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { MenuButton } from "@/components/ui/menu_button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import Image from "next/image";
-import Link from "next/link";
-
-// Define types for our coupon data
-interface Coupon {
-  id: number;
-  name: string;
-  imageUrl: string;
-  couponUrl: string;
-}
-
-interface Place {
-  place_id: number;
-  placename: string;
-  image_url: string;
-  coupon_url: string;
-  category: string;
-  has_coupon: boolean;
-  description: string;
-  url: string;
-}
+import {
+  StadiumCouponItem,
+  PlaceCouponItem,
+  type Coupon,
+  type Place,
+} from "@/components/ui/coupon_items";
 
 const stadiumCoupons: Coupon[] = [
   {
@@ -44,77 +31,9 @@ const stadiumCoupons: Coupon[] = [
   },
 ];
 
-const StadiumCouponItem: React.FC<{ coupon: Coupon }> = ({ coupon }) => (
-  <div className="flex flex-col space-y-1">
-    <div className="flex items-center justify-between p-2 rounded hover:bg-gray-50 transition-colors">
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="text-gray-800 font-medium">{coupon.name}</span>
-        <div className="flex items-center gap-2 mt-1">
-          <Link
-            href={coupon.couponUrl}
-            className="text-blue-500 text-sm hover:text-blue-600 bg-blue-50 px-3 py-1 rounded-md transition-colors whitespace-nowrap"
-          >
-            クーポンを表示
-          </Link>
-        </div>
-      </div>
-      <Link href={coupon.couponUrl} className="flex-shrink-0 ml-2 md:ml-4">
-        <Image
-          src={coupon.imageUrl}
-          alt={coupon.name}
-          width={80}
-          height={80}
-          className="rounded object-contain h-20 md:h-20 h-16"
-          style={{ width: "auto" }}
-        />
-      </Link>
-    </div>
-  </div>
-);
-
-const PlaceCouponItem: React.FC<{ place: Place }> = ({ place }) => (
-  <div className="flex flex-col space-y-1">
-    <div className="flex items-start justify-between p-2 rounded hover:bg-gray-50 transition-colors">
-      <div className="flex flex-col flex-1 min-w-0">
-        <Link
-          href={place.url}
-          className="text-gray-800 font-medium hover:text-blue-600"
-        >
-          {place.placename}
-        </Link>
-        <span className="text-gray-500 text-sm">{place.description}</span>
-        <div className="flex items-center gap-1 md:gap-2 mt-1">
-          <Link
-            href={place.coupon_url}
-            className="text-blue-500 text-sm hover:text-blue-600 bg-blue-50 px-2 md:px-3 py-1 rounded-md transition-colors whitespace-nowrap"
-          >
-            クーポンを表示
-          </Link>
-          <Link
-            href={place.url}
-            className="text-blue-500 text-sm hover:text-blue-600 whitespace-nowrap"
-          >
-            お店の詳細
-          </Link>
-        </div>
-      </div>
-      <Link href={place.coupon_url} className="flex-shrink-0 ml-2 md:ml-4">
-        <Image
-          src={place.image_url}
-          alt={place.placename}
-          width={80}
-          height={80}
-          className="rounded object-contain h-20 md:h-20 h-16"
-          style={{ width: "auto" }}
-        />
-      </Link>
-    </div>
-  </div>
-);
-
-const Coupon = () => {
+const Coupon: React.FC = () => {
   const [restaurantPlaces, setRestaurantPlaces] = useState<Place[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -136,10 +55,6 @@ const Coupon = () => {
           return isRestaurant && place.has_coupon === true;
         });
 
-        console.log(
-          "Filtered restaurants with coupons:",
-          restaurantWithCoupons
-        );
         setRestaurantPlaces(restaurantWithCoupons);
       } catch (err) {
         console.error("Fetch error:", err);
@@ -153,15 +68,15 @@ const Coupon = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-2 md:px-4">
+    <div className="container mx-auto px-2 md:px-2">
       <h1 className="text-2xl text-center font-bold mt-4 mb-6">クーポン</h1>
 
-      <div className="space-y-3 md:space-y-6 mb-6">
+      <div className="space-y-3 md:space-y-3 mb-3">
         <Card>
           <CardHeader>
             <CardTitle className="font-bold">スタジアム</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col space-y-2 p-2 md:p-6">
+          <CardContent className="flex flex-col space-y-2 p-2 md:p-4">
             {stadiumCoupons.map((coupon) => (
               <StadiumCouponItem key={coupon.id} coupon={coupon} />
             ))}
